@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/navbar";
+import Newsletter from "@/components/newsletter";
+import Footer from "@/components/footer";
+import CookieConsent from "@/components/cookie-consent";
+import ScrollToTop from "@/components/scroll-to-top";
 
 export const metadata: Metadata = {
   title: "Aging Platform",
@@ -24,6 +28,10 @@ export default function RootLayout({
           >
           <Navbar />
           {children}
+          <Newsletter />
+          <Footer />
+          <CookieConsent />
+          <ScrollToTop />
         </ThemeProvider>
       </body>
     </html>
