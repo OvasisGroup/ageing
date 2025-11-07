@@ -1,0 +1,62 @@
+export default function Hero() {
+  return (
+    <section className="pb-16 md:pb-24">
+      <div className="w-screen relative mx-auto">
+        <div 
+          className="relative h-[80vh] overflow-hidden bg-cover bg-center bg-no-repeat flex items-center justify-center md:justify-start"
+          style={{
+            backgroundImage: "url('/images/mbaba.jpg')"
+          }}
+        >
+          {/* Gradient Overlay - Responsive */}
+          <div className="absolute inset-0 bg-black/40 md:bg-gradient-to-r md:from-black/60 md:via-black/30 md:to-black/0"></div>
+
+          {/* Hero Content - Responsive */}
+          <div className="relative z-10 w-full text-center md:text-left">
+            <div className="container mx-auto px-4 md:px-6 lg:px-12 max-w-7xl">
+              <div className="w-full md:w-1/2 max-w-full md:max-w-none mx-auto md:mx-0">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight">
+                  Safe, Independent Living at Home
+                </h1>
+                <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 md:mb-8 leading-relaxed max-w-2xl mx-auto md:mx-0">
+                  Connect with certified CAPS professionals and trusted cleaning services to make your home safer, more accessible, and comfortable for aging in place and disability support.
+                </p>
+                
+                {/* Search Input */}
+                <div className="mb-6 md:mb-8 max-w-md mx-auto md:mx-0">
+                  <div className="relative flex">
+                    <input
+                      type="text"
+                      placeholder="Search for services in your area..."
+                      className="flex-1 px-4 py-3 pl-12 pr-4 rounded-l-lg bg-white/10 backdrop-blur border border-white/20 border-r-0 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40"
+                    />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-5 w-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                      </svg>
+                    </div>
+                    <button
+                      type="button"
+                      className="px-6 py-3 bg-primary text-primary-foreground rounded-r-lg font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors cursor-pointer"
+                    >
+                      Search
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+            <div className="animate-bounce">
+              <svg className="w-6 h-6 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
