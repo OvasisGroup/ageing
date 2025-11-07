@@ -1,4 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+
+// Initialize Prisma client
+const prisma = new PrismaClient();
+
+// Type assertion to handle potential TypeScript caching issues
+type NewsletterRecord = { id: string; email: string; name?: string | null; isActive: boolean };
+type PrismaWithNewsletter = PrismaClient & {
+  newsletterSubscription: {
+    findUnique: (args: { where: { email: string } }) => Promise<NewsletterRecord | null>;
+    create: (args: { data: { email: string; name?: string | null } }) => Promise<NewsletterRecord>;
+    update: (args: { where: { email: string }; data: { isActive?: boolean; name?: string; updatedAt?: Date } }) => Promise<NewsletterRecord>;
+  };
+};
+
+const typedPrisma = prisma as PrismaWithNewsletter;
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,16 +37,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Here you would typically:
-    // 1. Save to database (e.g., newsletter_subscriptions table)
-    // 2. Send to email service (e.g., Mailchimp, SendGrid)
-    // 3. Send confirmation email
-    
-    // For now, we'll simulate a successful subscription
-    console.log('Newsletter subscription:', { email, name, subscribedAt: new Date() });
+    // Check if email already exists
+    const existingSubscription = await typedPrisma.newsletterSubscription.findUnique({
+      where: { email }
+    });
 
-    // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (existingSubscription) {
+      if (existingSubscription.isActive) {
+        return NextResponse.json(
+          { error: 'This email is already subscribed to our newsletter' },
+          { status: 409 }
+        );
+      } else {
+        // Reactivate subscription
+        await typedPrisma.newsletterSubscription.update({
+          where: { email },
+          data: { 
+            isActive: true,
+            name: name || existingSubscription.name,
+            updatedAt: new Date()
+          }
+        });
+      }
+    } else {
+      // Create new subscription
+      await typedPrisma.newsletterSubscription.create({
+        data: {
+          email,
+          name: name || null
+        }
+      });
+    }
+
+    console.log('Newsletter subscription saved:', { email, name, subscribedAt: new Date() });
 
     return NextResponse.json(
       { 
@@ -46,5 +85,7 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to subscribe. Please try again.' },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
