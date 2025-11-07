@@ -353,7 +353,7 @@ export default function ProviderRegisterPage() {
   };
 
   return (
-    <div className="container relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+    <div className="container relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0 px-4">
       {/* Left side - Branding */}
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r rounded-r-3xl overflow-hidden">
         <div 
@@ -364,7 +364,7 @@ export default function ProviderRegisterPage() {
       </div>
 
       {/* Right side - Registration Form */}
-      <div className="lg:p-8">
+      <div className="lg:p-8 p-6">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[450px] max-h-screen overflow-y-auto py-8">
           <div className="flex flex-col items-center space-y-4">
             <Image
