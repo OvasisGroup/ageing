@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import Navbar from "@/components/navbar";
-import Newsletter from "@/components/newsletter";
-import Footer from "@/components/footer";
+import ConditionalLayout from "@/components/conditional-layout";
 import CookieConsent from "@/components/cookie-consent";
 import ScrollToTop from "@/components/scroll-to-top";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Aging Platform",
@@ -26,12 +25,44 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-          <Navbar />
-          {children}
-          <Newsletter />
-          <Footer />
+          <ConditionalLayout>
+            {children}
+          </ConditionalLayout>
           <CookieConsent />
           <ScrollToTop />
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: 'hsl(var(--background))',
+                color: 'hsl(var(--foreground))',
+                border: '1px solid hsl(var(--border))',
+              },
+              success: {
+                style: {
+                  background: 'hsl(var(--background))',
+                  color: 'hsl(var(--foreground))',
+                  border: '1px solid hsl(142 76% 36%)',
+                },
+                iconTheme: {
+                  primary: 'hsl(142 76% 36%)',
+                  secondary: 'hsl(var(--background))',
+                },
+              },
+              error: {
+                style: {
+                  background: 'hsl(var(--background))',
+                  color: 'hsl(var(--foreground))',
+                  border: '1px solid hsl(var(--destructive))',
+                },
+                iconTheme: {
+                  primary: 'hsl(var(--destructive))',
+                  secondary: 'hsl(var(--background))',
+                },
+              },
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>

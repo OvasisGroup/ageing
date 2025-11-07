@@ -14,11 +14,28 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
+  id                  String      @id @default(cuid())
+  username            String      @unique
+  email               String      @unique
+  password            String
+  role                Role        @default(CUSTOMER)
+  
+  // Common fields
+  firstName           String?
+  lastName            String?
+  phone               String?
+  
+  // Customer-specific fields
+  dateOfBirth         DateTime?
+  
+  // Provider-specific fields
+  businessName        String?
+  businessAddress     String?
+  licenseNumber       String?
+  serviceType         ServiceType?
+  yearsOfExperience   Int?
+  description         String?     @db.Text
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -26,9 +43,18 @@ model User {
 }
 
 enum Role {
-  USER
+  CUSTOMER
+  PROVIDER
   ADMIN
-  MODERATOR
+}
+
+enum ServiceType {
+  HOME_CARE
+  MEDICAL_CARE
+  COMPANIONSHIP
+  HOUSEKEEPING
+  TRANSPORTATION
+  OTHER
 }
 
 model NewsletterSubscription {

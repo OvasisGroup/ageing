@@ -4,8 +4,8 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 
-// Validation schema for registration data
-const registerSchema = z.object({
+// Validation schema for customer registration data
+const customerRegisterSchema = z.object({
   username: z.string()
     .min(3, 'Username must be at least 3 characters long')
     .max(20, 'Username must be at most 20 characters long')
@@ -16,7 +16,18 @@ const registerSchema = z.object({
   password: z.string()
     .min(8, 'Password must be at least 8 characters long')
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one lowercase letter, one uppercase letter, and one number'),
-  role: z.enum(['CUSTOMER', 'PROVIDER', 'ADMIN']).default('CUSTOMER')
+  firstName: z.string()
+    .min(2, 'First name must be at least 2 characters long')
+    .max(50, 'First name must be at most 50 characters long'),
+  lastName: z.string()
+    .min(2, 'Last name must be at least 2 characters long')
+    .max(50, 'Last name must be at most 50 characters long'),
+  phone: z.string()
+    .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number')
+    .optional(),
+  dateOfBirth: z.string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date of birth must be in YYYY-MM-DD format')
+    .optional()
 });
 
 export async function POST(request: NextRequest) {
@@ -24,7 +35,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate the request data
-    const validationResult = registerSchema.safeParse(body);
+    const validationResult = customerRegisterSchema.safeParse(body);
     
     if (!validationResult.success) {
       return NextResponse.json(
@@ -39,7 +50,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { username, email, password, role } = validationResult.data;
+    const { username, email, password, firstName, lastName, phone, dateOfBirth } = validationResult.data;
 
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
@@ -66,34 +77,42 @@ export async function POST(request: NextRequest) {
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Create new user in database
+    // Create new customer user in database
     const newUser = await prisma.user.create({
       data: {
         username,
         email,
         password: hashedPassword,
-        role: role as any,
-      },
+        role: 'CUSTOMER' as any,
+        firstName,
+        lastName,
+        phone,
+        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
+      } as any,
       select: {
         id: true,
         username: true,
         email: true,
         role: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        dateOfBirth: true,
         createdAt: true,
         updatedAt: true,
-      }
+      } as any
     });
     
     return NextResponse.json(
       {
-        message: 'User registered successfully',
+        message: 'Customer account created successfully',
         user: newUser
       },
       { status: 201 }
     );
 
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('Customer registration error:', error);
     
     // Handle Prisma unique constraint violations
     if (error && typeof error === 'object' && 'code' in error) {
@@ -105,36 +124,6 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
-
-// GET method to retrieve all users (for testing purposes - remove in production)
-export async function GET() {
-  try {
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    });
-    
-    return NextResponse.json({
-      users,
-      count: users.length
-    });
-  } catch (error) {
-    console.error('Error fetching users:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
