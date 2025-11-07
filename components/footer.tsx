@@ -101,13 +101,7 @@ export default function Footer() {
                 About
               </Link>
               <Link
-                href="/features"
-                className="text-sm text-white/70 hover:text-white transition-colors"
-              >
-                Features
-              </Link>
-              <Link
-                href="/contact"
+                href="/get-more-info"
                 className="text-sm text-white/70 hover:text-white transition-colors"
               >
                 Contact

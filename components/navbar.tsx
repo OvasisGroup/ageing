@@ -56,12 +56,6 @@ export default function Navbar() {
               About
             </Link>
             <Link
-              href="/features"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Features
-            </Link>
-            <Link
               href="/get-more-info"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
@@ -183,26 +177,11 @@ export default function Navbar() {
                 transition={{ duration: 0.3, delay: 0.3 }}
               >
                 <Link
-                  href="/features"
-                  onClick={() => setIsOpen(false)}
-                  className="block py-2 text-lg font-medium text-foreground/80 hover:text-foreground transition-colors"
-                >
-                  Features
-                </Link>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3, delay: 0.4 }}
-              >
-                <Link
                   href="/get-more-info"
                   onClick={() => setIsOpen(false)}
                   className="block py-2 text-lg font-medium text-foreground/80 hover:text-foreground transition-colors"
                 >
-                  Get More Info
+                  Get Involved
                 </Link>
               </motion.div>
               
