@@ -12,13 +12,23 @@ export default function Navbar() {
         {/* Left Section - Logo */}
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
+            {/* Mobile Logo */}
+            <Image
+              src="/images/mynestshield-icon.png"
+              alt="Aging Platform Logo"
+              width={0}
+              height={0}
+              sizes="100vw"
+              className="h-12 w-auto md:hidden"
+            />
+            {/* Desktop Logo */}
             <Image
               src="/images/MyNestShield.png"
               alt="Aging Platform Logo"
               width={0}
               height={0}
               sizes="100vw"
-              className="h-12 w-auto md:h-12"
+              className="hidden md:block h-12 w-auto"
             />
           </Link>
         </div>
