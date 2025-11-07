@@ -139,7 +139,7 @@ export default function Footer() {
                 href="/cookies"
                 className="text-sm text-white/70 hover:text-white transition-colors"
               >
-                Cookie Policy
+                Ageing
               </Link>
             </div>
           </div>
