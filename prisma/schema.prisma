@@ -41,3 +41,20 @@ model NewsletterSubscription {
 
   @@map("newsletter_subscriptions")
 }
+
+model Inquiry {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  message   String        @db.Text
+  status    InquiryStatus @default(OPEN)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("inquiries")
+}
+
+enum InquiryStatus {
+  OPEN
+  CLOSED
+}
