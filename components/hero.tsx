@@ -12,8 +12,8 @@ export default function Hero() {
             backgroundImage: "url('/images/mbaba.jpg')"
           }}
         >
-          {/* Gradient Overlay - Responsive */}
-          <div className="absolute inset-0 bg-black/50 md:bg-gradient-to-r md:from-black/60 md:via-black/30 md:to-black/0"></div>
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-slate-900/80"></div>
 
           {/* Hero Content - Responsive */}
           <div className="relative z-10 w-full text-center md:text-left">
@@ -41,7 +41,7 @@ export default function Hero() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
-                  className="mb-6 md:mb-8 max-w-md mx-auto md:mx-0"
+                  className="mb-6 md:mb-8 w-full max-w-sm sm:max-w-md mx-auto md:mx-0 px-4 sm:px-0"
                 >
                   <div className="relative flex">
                     <input
