@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { ArrowLeft, Send, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function GetMoreInfoPage() {
   const [formData, setFormData] = useState({
@@ -48,38 +49,51 @@ export default function GetMoreInfoPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12">
-      <div className="container mx-auto px-4 md:px-6 max-w-4xl">
+    <>
+      {/* Hero Section with Background Image */}
+      <section 
+        className="relative w-full h-[40vh] bg-cover bg-center bg-no-repeat flex items-center justify-center"
+        style={{
+          backgroundImage: 'url(/images/elderly_home.jpg)'
+        }}
+      >
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/50"></div>
         
-        {/* Header */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <Link 
-            href="/"
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-6"
+        {/* Content */}
+        <div className="relative z-10 text-center text-white px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
-          
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-            Get More Information
-          </h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Have questions about our services? We&apos;d love to hear from you. 
-            Fill out the form below and we&apos;ll get back to you as soon as possible.
-          </p>
-        </motion.div>
+            <Link 
+              href="/"
+              className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-6"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Home
+            </Link>
+            
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Get More Information
+            </h1>
+            <p className="text-xl text-white/90 max-w-2xl mx-auto">
+              Have questions about our services? We&apos;d love to hear from you. 
+              Fill out the form below and we&apos;ll get back to you as soon as possible.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12">
+        <div className="container mx-auto px-4 md:px-6">
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* Form Section */}
           <motion.div
-            className="bg-white rounded-2xl shadow-xl p-8"
+            className="bg-white rounded-2xl p-8"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -192,77 +206,70 @@ export default function GetMoreInfoPage() {
             )}
           </motion.div>
 
-          {/* Information Section */}
+          {/* Why Choose Us Section */}
           <motion.div
-            className="space-y-8"
+            className="bg-white rounded-2xl p-8"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            {/* Why Choose Us */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="text-2xl font-bold text-slate-900 mb-6">Why Choose MyNestShield?</h3>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center mt-1">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">CAPS-Certified Specialists</h4>
-                    <p className="text-slate-600 text-sm">Professional certified aging-in-place specialists</p>
-                  </div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-6">Why Choose MyNestShield?</h3>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center mt-1">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center mt-1">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">Comprehensive Services</h4>
-                    <p className="text-slate-600 text-sm">From home modifications to cleaning services</p>
-                  </div>
+                <div>
+                  <h4 className="font-semibold text-slate-900">CAPS-Certified Specialists</h4>
+                  <p className="text-slate-600 text-sm">Professional certified aging-in-place specialists</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center mt-1">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">North Carolina Focused</h4>
-                    <p className="text-slate-600 text-sm">Local expertise for North Carolina residents</p>
-                  </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center mt-1">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center mt-1">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">Dignity & Independence</h4>
-                    <p className="text-slate-600 text-sm">Supporting safe aging in place with respect</p>
-                  </div>
+                <div>
+                  <h4 className="font-semibold text-slate-900">Comprehensive Services</h4>
+                  <p className="text-slate-600 text-sm">From home modifications to cleaning services</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center mt-1">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-slate-900">North Carolina Focused</h4>
+                  <p className="text-slate-600 text-sm">Local expertise for North Carolina residents</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center mt-1">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-slate-900">Dignity & Independence</h4>
+                  <p className="text-slate-600 text-sm">Supporting safe aging in place with respect</p>
                 </div>
               </div>
             </div>
-
-            {/* Contact Information */}
-            <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl shadow-xl p-8 text-white">
-              <h3 className="text-2xl font-bold mb-6">Get in Touch</h3>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold mb-1">Response Time</h4>
-                  <p className="text-primary-foreground/90">We typically respond within 24 hours</p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Service Areas</h4>
-                  <p className="text-primary-foreground/90">Throughout North Carolina</p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Available Services</h4>
-                  <p className="text-primary-foreground/90">Home modifications, cleaning, consultations</p>
-                </div>
-              </div>
+            
+            {/* Why Us Image */}
+            <div className="mt-6">
+              <Image
+                src="/images/whyus.jpg"
+                alt="Why choose MyNestShield - Supporting seniors and people with disabilities"
+                width={400}
+                height={250}
+                className="w-full h-auto rounded-lg object-cover"
+              />
             </div>
+            
           </motion.div>
         </div>
+
+        
       </div>
     </main>
+    </>
   );
 }
