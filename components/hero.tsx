@@ -43,20 +43,22 @@ export default function Hero() {
                   transition={{ duration: 0.8, delay: 0.6 }}
                   className="mb-6 md:mb-8 w-full max-w-sm sm:max-w-md mx-auto md:mx-0 px-4 sm:px-0"
                 >
-                  <div className="relative flex">
-                    <input
-                      type="text"
-                      placeholder="Search for services in your area..."
-                      className="flex-1 px-4 py-3 pl-12 pr-4 rounded-l-lg bg-white/10 backdrop-blur border border-white/20 border-r-0 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40"
-                    />
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
-                      </svg>
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-0">
+                    <div className="relative flex-1">
+                      <input
+                        type="text"
+                        placeholder="Search for services in your area..."
+                        className="w-full px-4 py-3 pl-12 pr-4 rounded-lg sm:rounded-l-lg sm:rounded-r-none bg-white/10 backdrop-blur border border-white/20 sm:border-r-0 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40"
+                      />
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                        </svg>
+                      </div>
                     </div>
                     <button
                       type="button"
-                      className="px-6 py-3 bg-primary text-primary-foreground rounded-r-lg font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors cursor-pointer"
+                      className="w-full sm:w-auto px-6 py-3 bg-primary text-primary-foreground rounded-lg sm:rounded-l-none sm:rounded-r-lg font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors cursor-pointer"
                     >
                       Search
                     </button>
