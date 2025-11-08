@@ -97,6 +97,12 @@ const navItems: NavItem[] = [
     roles: ['ADMIN']
   },
   {
+    name: 'Profile',
+    href: '/dashboard/admin/profile',
+    icon: '👤',
+    roles: ['ADMIN']
+  },
+  {
     name: 'Settings',
     href: '/dashboard/admin/settings',
     icon: '⚙️',
@@ -107,7 +113,7 @@ const navItems: NavItem[] = [
     name: 'Profile',
     href: '/dashboard/profile',
     icon: '👤',
-    roles: ['CUSTOMER', 'PROVIDER', 'ADMIN']
+    roles: ['CUSTOMER', 'PROVIDER']
   },
   {
     name: 'Settings',

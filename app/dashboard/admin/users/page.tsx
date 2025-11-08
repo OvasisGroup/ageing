@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import DashboardLayout from '@/components/dashboard/layout';
+import EditUserModal from '@/components/admin/edit-user-modal';
+import DeleteUserModal from '@/components/admin/delete-user-modal';
+import toast from 'react-hot-toast';
 
 type User = {
   id: string;
@@ -13,11 +16,13 @@ type User = {
   lastName: string | null;
   phone: string | null;
   role: 'CUSTOMER' | 'PROVIDER' | 'ADMIN';
+  dateOfBirth: string | null;
   businessName: string | null;
   businessAddress: string | null;
   licenseNumber: string | null;
   serviceType: string | null;
   yearsOfExperience: number | null;
+  description: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -26,6 +31,9 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'CUSTOMER' | 'PROVIDER' | 'ADMIN'>('all');
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -43,6 +51,31 @@ export default function AdminUsersPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setShowEditModal(true);
+  };
+
+  const handleDeleteUser = (user: User) => {
+    setSelectedUser(user);
+    setShowDeleteModal(true);
+  };
+
+  const handleUserUpdated = (updatedUser: User) => {
+    setUsers(users.map(user => user.id === updatedUser.id ? updatedUser : user));
+    setShowEditModal(false);
+    setSelectedUser(null);
+    // Success toast is handled by the modal component
+  };
+
+  const handleUserDeleted = (deletedUserId: string) => {
+    setUsers(users.filter(user => user.id !== deletedUserId));
+    setShowDeleteModal(false);
+    setSelectedUser(null);
+    // Success toast is handled by the modal component
+    toast.success('User list updated');
   };
 
   const getRoleColor = (role: string) => {
@@ -177,7 +210,7 @@ export default function AdminUsersPage() {
                   <th className="text-left p-3 font-medium text-muted-foreground w-[20%]">Business Info</th>
                   <th className="text-left p-3 font-medium text-muted-foreground w-[10%]">Role</th>
                   <th className="text-left p-3 font-medium text-muted-foreground w-[12%]">Joined</th>
-                  <th className="text-left p-3 font-medium text-muted-foreground w-[5%]">Actions</th>
+                  <th className="text-left p-3 font-medium text-muted-foreground w-[8%]">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -254,11 +287,32 @@ export default function AdminUsersPage() {
                         })}
                       </td>
                       <td className="p-3">
-                        <Link href={`/dashboard/admin/users/${user.id}`}>
-                          <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-8 w-full">
-                            View
+                        <div className="flex space-x-1">
+                          <Link href={`/dashboard/admin/users/${user.id}`}>
+                            <Button variant="outline" size="sm" className="text-xs px-1 py-1 h-8 w-12" title="View Details">
+                              👁️
+                            </Button>
+                          </Link>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-xs px-1 py-1 h-8 w-12" 
+                            title="Edit User"
+                            onClick={() => handleEditUser(user)}
+                          >
+                            ✏️
                           </Button>
-                        </Link>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-xs px-1 py-1 h-8 w-12 text-red-600 hover:text-red-700 hover:bg-red-50" 
+                            title="Delete User"
+                            onClick={() => handleDeleteUser(user)}
+                            disabled={user.role === 'ADMIN'}
+                          >
+                            🗑️
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -333,11 +387,32 @@ export default function AdminUsersPage() {
                       year: '2-digit'
                     })}
                   </span>
-                  <Link href={`/dashboard/admin/users/${user.id}`}>
-                    <Button variant="outline" size="sm" className="text-xs px-3 py-1 h-8">
-                      View
+                  <div className="flex space-x-2">
+                    <Link href={`/dashboard/admin/users/${user.id}`}>
+                      <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-8" title="View">
+                        👁️
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-xs px-2 py-1 h-8" 
+                      title="Edit"
+                      onClick={() => handleEditUser(user)}
+                    >
+                      ✏️
                     </Button>
-                  </Link>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-xs px-2 py-1 h-8 text-red-600 hover:text-red-700 hover:bg-red-50" 
+                      title="Delete"
+                      onClick={() => handleDeleteUser(user)}
+                      disabled={user.role === 'ADMIN'}
+                    >
+                      🗑️
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))
@@ -353,6 +428,26 @@ export default function AdminUsersPage() {
           </div>
         )}
       </div>
+
+      {/* Edit User Modal */}
+      {selectedUser && (
+        <EditUserModal
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          user={selectedUser}
+          onUserUpdated={handleUserUpdated}
+        />
+      )}
+
+      {/* Delete User Modal */}
+      {selectedUser && (
+        <DeleteUserModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          user={selectedUser}
+          onUserDeleted={handleUserDeleted}
+        />
+      )}
     </DashboardLayout>
   );
 }

@@ -5,16 +5,19 @@ import { PrismaClient } from '@prisma/client';
 // Initialize Prisma client with custom typing for user model
 const prisma = new PrismaClient() as any;
 
-// GET: Retrieve a specific user by ID (for admin use only)
+// GET: Retrieve a specific provider by ID (for admin use only)
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: userId } = await params;
+    const { id: providerId } = await params;
     
-    // Find all users first and then filter by ID (temporary workaround)
-    const users = await prisma.user.findMany({
+    // Find all providers first and then filter by ID (temporary workaround)
+    const providers = await prisma.user.findMany({
+      where: {
+        role: 'PROVIDER',
+      },
       select: {
         id: true,
         username: true,
@@ -35,20 +38,20 @@ export async function GET(
       },
     });
 
-    const user = users.find((u: any) => u.id === userId);
+    const provider = providers.find((p: any) => p.id === providerId);
 
-    if (!user) {
+    if (!provider) {
       return NextResponse.json(
-        { error: 'User not found' },
+        { error: 'Provider not found' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(user);
+    return NextResponse.json(provider);
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error('Error fetching provider:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch user' },
+      { error: 'Failed to fetch provider' },
       { status: 500 }
     );
   } finally {
@@ -56,13 +59,13 @@ export async function GET(
   }
 }
 
-// PUT: Update a specific user by ID (for admin use only)
+// PUT: Update a specific provider by ID (for admin use only)
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: userId } = await params;
+    const { id: providerId } = await params;
     const body = await request.json();
     
     // In a real application, you would verify admin authentication here
@@ -85,15 +88,18 @@ export async function PUT(
       description
     } = body;
 
-    // Check if user exists
-    const existingUsers = await prisma.user.findMany({
-      where: { id: userId },
+    // Check if provider exists and is actually a provider
+    const existingProviders = await prisma.user.findMany({
+      where: { 
+        id: providerId,
+        role: 'PROVIDER'
+      },
       select: { id: true }
     });
 
-    if (existingUsers.length === 0) {
+    if (existingProviders.length === 0) {
       return NextResponse.json(
-        { error: 'User not found' },
+        { error: 'Provider not found' },
         { status: 404 }
       );
     }
@@ -105,7 +111,7 @@ export async function PUT(
           { username: username },
           { email: email }
         ],
-        NOT: { id: userId }
+        NOT: { id: providerId }
       },
       select: { id: true, username: true, email: true }
     });
@@ -117,16 +123,16 @@ export async function PUT(
       );
     }
 
-    // Update the user
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
+    // Update the provider
+    const updatedProvider = await prisma.user.update({
+      where: { id: providerId },
       data: {
         username,
         email,
         firstName: firstName || null,
         lastName: lastName || null,
         phone: phone || null,
-        role,
+        role: role || 'PROVIDER',
         dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
         businessName: businessName || null,
         businessAddress: businessAddress || null,
@@ -156,11 +162,11 @@ export async function PUT(
       }
     });
 
-    return NextResponse.json(updatedUser);
+    return NextResponse.json(updatedProvider);
   } catch (error) {
-    console.error('Error updating user:', error);
+    console.error('Error updating provider:', error);
     return NextResponse.json(
-      { error: 'Failed to update user' },
+      { error: 'Failed to update provider' },
       { status: 500 }
     );
   } finally {
@@ -168,53 +174,46 @@ export async function PUT(
   }
 }
 
-// DELETE: Delete a specific user by ID (for admin use only)
+// DELETE: Delete a specific provider by ID (for admin use only)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: userId } = await params;
+    const { id: providerId } = await params;
     
     // In a real application, you would verify admin authentication here
     // For now, we'll assume the request is authenticated
     
-    // Check if user exists
-    const existingUsers = await prisma.user.findMany({
-      where: { id: userId },
+    // Check if provider exists and is actually a provider
+    const existingProviders = await prisma.user.findMany({
+      where: { 
+        id: providerId,
+        role: 'PROVIDER'
+      },
       select: { id: true, role: true }
     });
 
-    if (existingUsers.length === 0) {
+    if (existingProviders.length === 0) {
       return NextResponse.json(
-        { error: 'User not found' },
+        { error: 'Provider not found' },
         { status: 404 }
       );
     }
 
-    const user = existingUsers[0];
-
-    // Prevent deletion of admin users (safety measure)
-    if (user.role === 'ADMIN') {
-      return NextResponse.json(
-        { error: 'Cannot delete admin users' },
-        { status: 403 }
-      );
-    }
-
-    // Delete the user
+    // Delete the provider
     await prisma.user.delete({
-      where: { id: userId }
+      where: { id: providerId }
     });
 
     return NextResponse.json(
-      { message: 'User deleted successfully' },
+      { message: 'Provider deleted successfully' },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error deleting user:', error);
+    console.error('Error deleting provider:', error);
     return NextResponse.json(
-      { error: 'Failed to delete user' },
+      { error: 'Failed to delete provider' },
       { status: 500 }
     );
   } finally {
