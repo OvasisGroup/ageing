@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://mynestshield.com
+
+# Sitemaps
+Sitemap: https://mynestshield.com/sitemap.xml

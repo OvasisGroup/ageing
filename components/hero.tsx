@@ -33,7 +33,7 @@ export default function Hero() {
                   transition={{ duration: 0.8, delay: 0.4 }}
                   className="text-base sm:text-lg md:text-xl text-white/90 mb-6 md:mb-8 leading-relaxed max-w-2xl mx-auto md:mx-0"
                 >
-                  Connect with certified CAPS professionals and trusted cleaning services to make your home safer, more accessible, and comfortable for aging in place and disability support.
+                  Connect with certified CAPS professionals, licensed contractors and Trusted cleaning service professionals to make your home safer, more accessible, and comfortable for aging in place and disability support.
                 </motion.p>
                 
                 {/* Search Input */}

@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -66,7 +65,6 @@ export default function Navbar() {
 
         {/* Right Section - Actions */}
         <div className="flex items-center space-x-4">
-          <ThemeToggle />
           <Button asChild>
             <Link href="/login">
               Get Started
@@ -192,10 +190,6 @@ export default function Navbar() {
                 transition={{ duration: 0.3, delay: 0.5 }}
                 className="pt-4 border-t border-border/40 space-y-4"
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground/80">Theme</span>
-                  <ThemeToggle />
-                </div>
                 <Button asChild className="w-full">
                   <Link href="/login" onClick={() => setIsOpen(false)}>
                     Get Started
