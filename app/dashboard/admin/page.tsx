@@ -1,9 +1,31 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import DashboardLayout from '@/components/dashboard/layout';
 
 export default function AdminDashboard() {
+  const [totalInquiries, setTotalInquiries] = useState(0);
+  const [loadingInquiries, setLoadingInquiries] = useState(true);
+
+  useEffect(() => {
+    fetchInquiriesCount();
+  }, []);
+
+  const fetchInquiriesCount = async () => {
+    try {
+      const response = await fetch('/api/inquiries');
+      if (response.ok) {
+        const data = await response.json();
+        setTotalInquiries(data.length);
+      }
+    } catch (error) {
+      console.error('Error fetching inquiries count:', error);
+    } finally {
+      setLoadingInquiries(false);
+    }
+  };
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -28,24 +50,41 @@ export default function AdminDashboard() {
           </div>
           
           <div className="bg-card p-6 rounded-lg border border-border">
-            <h3 className="text-lg font-semibold mb-2">System Health</h3>
-            <p className="text-3xl font-bold text-green-600">✓</p>
-            <p className="text-sm text-muted-foreground">All systems operational</p>
+            <h3 className="text-lg font-semibold mb-2">Total Inquiries</h3>
+            <p className="text-3xl font-bold text-orange-600">
+              {loadingInquiries ? (
+                <span className="animate-pulse">...</span>
+              ) : (
+                totalInquiries
+              )}
+            </p>
+            <p className="text-sm text-muted-foreground">Customer inquiries</p>
           </div>
         </div>
 
         {/* Admin Actions */}
         <div className="bg-card p-6 rounded-lg border border-border">
           <h2 className="text-xl font-semibold mb-4">Admin Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">👥</span>
-              Manage Users
-            </Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <Link href="/dashboard/admin/users">
+              <Button className="h-20 flex flex-col items-center justify-center w-full">
+                <span className="text-lg mb-1">👥</span>
+                Manage Users
+              </Button>
+            </Link>
             <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
               <span className="text-lg mb-1">🏢</span>
               Manage Providers
             </Button>
+            <Link href="/dashboard/admin/inquiries">
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center w-full"
+              >
+                <span className="text-lg mb-1">📧</span>
+                Manage Inquiries
+              </Button>
+            </Link>
             <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
               <span className="text-lg mb-1">📊</span>
               Analytics
