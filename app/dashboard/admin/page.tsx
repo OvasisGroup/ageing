@@ -1,85 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import toast from 'react-hot-toast';
-
-type User = {
-  id: number;
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-};
+import DashboardLayout from '@/components/dashboard/layout';
 
 export default function AdminDashboard() {
-  const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // TODO: Implement session check
-    // For now, we&apos;ll simulate loading user data
-    const mockUser: User = {
-      id: 1,
-      username: 'admin1',
-      email: 'admin@example.com',
-      firstName: 'Admin',
-      lastName: 'User',
-      role: 'ADMIN'
-    };
-    
-    setTimeout(() => {
-      setUser(mockUser);
-      setIsLoading(false);
-    }, 1000);
-  }, []);
-
-  const handleLogout = () => {
-    // TODO: Implement actual logout
-    toast.success('Logged out successfully');
-    router.push('/login');
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Dashboard Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-primary">Admin Dashboard</h1>
-              <span className="text-muted-foreground">Welcome back, {user?.firstName}!</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-2 py-1 rounded">
-                {user?.role}
-              </span>
-              <Button variant="outline" onClick={handleLogout}>
-                Logout
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Dashboard Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* System Stats */}
+    <DashboardLayout>
+      <div className="space-y-8">
+        {/* System Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-card p-6 rounded-lg border border-border">
             <h3 className="text-lg font-semibold mb-2">Total Users</h3>
             <p className="text-3xl font-bold text-primary">0</p>
@@ -106,7 +35,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Admin Actions */}
-        <div className="bg-card p-6 rounded-lg border border-border mb-8">
+        <div className="bg-card p-6 rounded-lg border border-border">
           <h2 className="text-xl font-semibold mb-4">Admin Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Button className="h-20 flex flex-col items-center justify-center">
@@ -129,7 +58,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Management Sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-card p-6 rounded-lg border border-border">
             <h2 className="text-xl font-semibold mb-4">Recent Registrations</h2>
             <div className="text-center py-8 text-muted-foreground">
@@ -165,7 +94,7 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

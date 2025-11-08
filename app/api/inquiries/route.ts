@@ -10,6 +10,8 @@ const prisma = new PrismaClient() as any;
 const inquirySchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
   email: z.string().email('Invalid email address'),
+  phone: z.string().max(20, 'Phone must be less than 20 characters').optional(),
+  subject: z.string().max(200, 'Subject must be less than 200 characters').optional(),
   message: z.string().min(10, 'Message must be at least 10 characters').max(1000, 'Message must be less than 1000 characters'),
 });
 
@@ -31,15 +33,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email, message } = validation.data;
+    const { name, email, phone, subject, message } = validation.data;
 
     // Create the inquiry in the database
     const inquiry = await prisma.inquiry.create({
       data: {
         name,
         email,
+        phone: phone || 'Not provided',
+        subject: subject || 'General Inquiry',
         message,
-        status: 'OPEN', // Default status
+        status: 'PENDING', // Default status
+        priority: 'MEDIUM', // Default priority
       },
     });
 
@@ -50,7 +55,10 @@ export async function POST(request: NextRequest) {
           id: inquiry.id,
           name: inquiry.name,
           email: inquiry.email,
+          phone: inquiry.phone,
+          subject: inquiry.subject,
           status: inquiry.status,
+          priority: inquiry.priority,
           createdAt: inquiry.createdAt,
         }
       },
@@ -71,33 +79,18 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const skip = (page - 1) * limit;
 
     // Build the where clause
-    const where = status ? { status: status.toUpperCase() as 'OPEN' | 'CLOSED' } : {};
+    const where = status ? { status: status.toUpperCase() as 'PENDING' | 'REVIEWED' | 'RESPONDED' | 'CLOSED' } : {};
 
-    // Get inquiries with pagination
-    const [inquiries, total] = await Promise.all([
-      prisma.inquiry.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit,
-      }),
-      prisma.inquiry.count({ where }),
-    ]);
-
-    return NextResponse.json({
-      inquiries,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+    // Get all inquiries for the admin dashboard
+    const inquiries = await prisma.inquiry.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
     });
+
+    // Return all inquiries
+    return NextResponse.json(inquiries);
 
   } catch (error) {
     console.error('Error fetching inquiries:', error);

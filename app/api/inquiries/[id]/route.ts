@@ -6,15 +6,16 @@ import { z } from 'zod';
 // Initialize Prisma client with custom typing for inquiry model
 const prisma = new PrismaClient() as any;
 
-// Validation schema for status update
-const updateStatusSchema = z.object({
-  status: z.enum(['OPEN', 'CLOSED'], {
-    message: 'Status must be either OPEN or CLOSED'
-  }),
+// Validation schema for inquiry updates
+const updateInquirySchema = z.object({
+  status: z.enum(['PENDING', 'REVIEWED', 'RESPONDED', 'CLOSED']).optional(),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
+}).refine(data => data.status || data.priority, {
+  message: 'At least one field (status or priority) must be provided'
 });
 
-// PUT: Update inquiry status
-export async function PUT(
+// PATCH: Update inquiry status or priority
+export async function PATCH(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
@@ -23,7 +24,7 @@ export async function PUT(
     const body = await request.json();
     
     // Validate the request body
-    const validation = updateStatusSchema.safeParse(body);
+    const validation = updateInquirySchema.safeParse(body);
     
     if (!validation.success) {
       return NextResponse.json(
@@ -35,7 +36,7 @@ export async function PUT(
       );
     }
 
-    const { status } = validation.data;
+    const updateData = validation.data;
 
     // Check if inquiry exists
     const existingInquiry = await prisma.inquiry.findUnique({
@@ -49,27 +50,18 @@ export async function PUT(
       );
     }
 
-    // Update the inquiry status
+    // Update the inquiry
     const updatedInquiry = await prisma.inquiry.update({
       where: { id },
-      data: { status },
+      data: updateData,
     });
 
-    return NextResponse.json({
-      message: 'Inquiry status updated successfully',
-      inquiry: {
-        id: updatedInquiry.id,
-        name: updatedInquiry.name,
-        email: updatedInquiry.email,
-        status: updatedInquiry.status,
-        updatedAt: updatedInquiry.updatedAt,
-      },
-    });
+    return NextResponse.json(updatedInquiry);
 
   } catch (error) {
-    console.error('Error updating inquiry status:', error);
+    console.error('Error updating inquiry:', error);
     return NextResponse.json(
-      { error: 'Failed to update inquiry status' },
+      { error: 'Failed to update inquiry' },
       { status: 500 }
     );
   }
@@ -94,7 +86,7 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ inquiry });
+    return NextResponse.json(inquiry);
 
   } catch (error) {
     console.error('Error fetching inquiry:', error);

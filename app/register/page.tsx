@@ -38,10 +38,10 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Customer Registration Option */}
             <Link href="/register/customer">
-              <div className="p-6 border border-border rounded-lg hover:border-primary hover:bg-accent/50 transition-colors cursor-pointer">
+              <div className="p-6 border border-border rounded-lg hover:border-primary hover:bg-accent/50 transition-colors cursor-pointer mb-4">
                 <div className="flex items-start space-x-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300">
                     <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

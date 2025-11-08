@@ -14,6 +14,8 @@ export default function ContactForm({ isOpen, onClose }: ContactFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
+    subject: '',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,7 +38,7 @@ export default function ContactForm({ isOpen, onClose }: ContactFormProps) {
     try {
       await axios.post('/api/inquiries', formData);
       setIsSuccess(true);
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
       
       // Close modal after showing success for 2 seconds
       setTimeout(() => {
@@ -121,6 +123,36 @@ export default function ContactForm({ isOpen, onClose }: ContactFormProps) {
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="your.email@example.com"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone (optional)
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="Your phone number"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                  Subject (optional)
+                </label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="Subject of your inquiry"
                 />
               </div>
 

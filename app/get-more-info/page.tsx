@@ -12,6 +12,8 @@ export default function GetMoreInfoPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
+    subject: '',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,7 +36,7 @@ export default function GetMoreInfoPage() {
     try {
       await axios.post('/api/inquiries', formData);
       setIsSuccess(true);
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to submit inquiry. Please try again.');
     } finally {
@@ -45,7 +47,7 @@ export default function GetMoreInfoPage() {
   const resetForm = () => {
     setIsSuccess(false);
     setError('');
-    setFormData({ name: '', email: '', message: '' });
+    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
   };
 
   return (
@@ -153,6 +155,36 @@ export default function GetMoreInfoPage() {
                       required
                       className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
                       placeholder="your.email@example.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Phone Number (optional)
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                      placeholder="Your phone number"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="subject" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Subject (optional)
+                    </label>
+                    <input
+                      type="text"
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                      placeholder="Subject of your inquiry"
                     />
                   </div>
 
