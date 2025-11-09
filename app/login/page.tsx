@@ -47,13 +47,23 @@ export default function LoginPage() {
         // Store user data in localStorage (in production, use secure session management)
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        // Redirect based on user role
-        const roleRedirects: { [key: string]: string } = {
-          'CUSTOMER': '/dashboard/customer',
-          'PROVIDER': '/dashboard/provider',
-          'ADMIN': '/dashboard/admin'
-        };
-        const redirectPath = roleRedirects[data.user.role] || '/dashboard/customer';
+        // Redirect based on user role/subrole
+        let redirectPath = '/dashboard/customer';
+        
+        // Check subrole first (for family members and caregivers)
+        if (data.user.subRole === 'FAMILY_MEMBER') {
+          redirectPath = '/dashboard/family-member';
+        } else if (data.user.subRole === 'CAREGIVER') {
+          redirectPath = '/dashboard/caregiver';
+        } else {
+          // Fall back to role-based redirect
+          const roleRedirects: { [key: string]: string } = {
+            'CUSTOMER': '/dashboard/customer',
+            'PROVIDER': '/dashboard/provider',
+            'ADMIN': '/dashboard/admin',
+          };
+          redirectPath = roleRedirects[data.user.role] || '/dashboard/customer';
+        }
         
         setTimeout(() => {
           router.push(redirectPath);

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
@@ -32,7 +30,7 @@ export async function POST(request: NextRequest) {
     const { email, password } = validationResult.data;
 
     // Find user by email
-    const user = await (prisma as any).user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email },
       select: {
         id: true,
@@ -40,6 +38,7 @@ export async function POST(request: NextRequest) {
         email: true,
         password: true,
         role: true,
+        subRole: true,
         firstName: true,
         lastName: true,
         phone: true,
@@ -67,6 +66,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Remove password from response
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
 
     // TODO: Create JWT token or session here

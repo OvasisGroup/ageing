@@ -3,7 +3,15 @@ export interface User {
   username: string;
   email: string;
   password: string;
-  role: 'USER' | 'ADMIN' | 'MODERATOR';
+  role: 'CUSTOMER' | 'PROVIDER' | 'ADMIN';
+  subRole?: 'FAMILY_MEMBER' | 'CAREGIVER' | null;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  dateOfBirth?: Date;
+  businessName?: string;
+  parentUserId?: string;
+  permissions?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -14,7 +22,11 @@ export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
-  role?: 'USER' | 'ADMIN' | 'MODERATOR';
+  role?: 'CUSTOMER' | 'PROVIDER' | 'ADMIN';
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  dateOfBirth?: string;
 }
 
 export interface ApiError {

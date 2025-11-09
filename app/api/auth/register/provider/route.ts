@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
@@ -112,17 +111,17 @@ export async function POST(request: NextRequest) {
         username,
         email,
         password: hashedPassword,
-        role: 'PROVIDER' as any,
+        role: 'PROVIDER',
         firstName,
         lastName,
-        phone,
-        businessName,
-        businessAddress,
-        licenseNumber,
-        serviceType,
-        yearsOfExperience,
-        description,
-      } as any,
+        phone: phone || null,
+        businessName: businessName || null,
+        businessAddress: businessAddress || null,
+        licenseNumber: licenseNumber || null,
+        serviceType: serviceType || null,
+        yearsOfExperience: yearsOfExperience || null,
+        description: description || null,
+      },
       select: {
         id: true,
         username: true,
@@ -139,7 +138,7 @@ export async function POST(request: NextRequest) {
         description: true,
         createdAt: true,
         updatedAt: true,
-      } as any
+      }
     });
     
     return NextResponse.json(

@@ -14,7 +14,7 @@ type User = {
   businessName?: string;
 };
 
-type UserRole = 'CUSTOMER' | 'PROVIDER' | 'ADMIN';
+type UserRole = 'CUSTOMER' | 'PROVIDER' | 'ADMIN' | 'FAMILY_MEMBER' | 'CAREGIVER';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

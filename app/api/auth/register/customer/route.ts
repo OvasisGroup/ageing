@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
@@ -27,7 +26,22 @@ const customerRegisterSchema = z.object({
     .optional(),
   dateOfBirth: z.string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date of birth must be in YYYY-MM-DD format')
+    .optional(),
+  subRole: z.enum(['FAMILY_MEMBER', 'CAREGIVER'])
+    .optional(),
+  parentCustomerEmail: z.string()
+    .email('Please enter a valid parent customer email')
+    .toLowerCase()
     .optional()
+}).refine((data) => {
+  // If subRole is provided, parentCustomerEmail must also be provided
+  if (data.subRole && !data.parentCustomerEmail) {
+    return false;
+  }
+  return true;
+}, {
+  message: 'Parent customer email is required when registering as a family member or caregiver',
+  path: ['parentCustomerEmail']
 });
 
 export async function POST(request: NextRequest) {
@@ -50,7 +64,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { username, email, password, firstName, lastName, phone, dateOfBirth } = validationResult.data;
+    const { username, email, password, firstName, lastName, phone, dateOfBirth, subRole, parentCustomerEmail } = validationResult.data;
+
+    // If registering as a subrole, verify parent customer exists
+    let parentUserId: string | null = null;
+    if (subRole && parentCustomerEmail) {
+      const parentCustomer = await prisma.user.findUnique({
+        where: { email: parentCustomerEmail },
+        select: { id: true, role: true }
+      });
+
+      if (!parentCustomer) {
+        return NextResponse.json(
+          { error: 'Parent customer account not found with that email address' },
+          { status: 404 }
+        );
+      }
+
+      if (parentCustomer.role !== 'CUSTOMER') {
+        return NextResponse.json(
+          { error: 'The provided email must belong to a customer account' },
+          { status: 400 }
+        );
+      }
+
+      parentUserId = parentCustomer.id;
+    }
 
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
@@ -83,24 +122,28 @@ export async function POST(request: NextRequest) {
         username,
         email,
         password: hashedPassword,
-        role: 'CUSTOMER' as any,
+        role: 'CUSTOMER',
         firstName,
         lastName,
-        phone,
+        phone: phone || null,
         dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
-      } as any,
+        subRole: subRole || null,
+        parentUserId: parentUserId,
+      },
       select: {
         id: true,
         username: true,
         email: true,
         role: true,
+        subRole: true,
         firstName: true,
         lastName: true,
         phone: true,
         dateOfBirth: true,
+        parentUserId: true,
         createdAt: true,
         updatedAt: true,
-      } as any
+      }
     });
     
     return NextResponse.json(

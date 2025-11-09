@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
-type UserRole = 'CUSTOMER' | 'PROVIDER' | 'ADMIN';
+type UserRole = 'CUSTOMER' | 'PROVIDER' | 'ADMIN' | 'FAMILY_MEMBER' | 'CAREGIVER';
 
 interface DashboardSidebarProps {
   userRole: UserRole;
@@ -25,7 +25,7 @@ const navItems: NavItem[] = [
     name: 'Dashboard',
     href: '/dashboard',
     icon: '🏠',
-    roles: ['CUSTOMER', 'PROVIDER', 'ADMIN']
+    roles: ['CUSTOMER', 'PROVIDER', 'ADMIN', 'FAMILY_MEMBER', 'CAREGIVER']
   },
   // Customer specific items
   {
@@ -41,10 +41,72 @@ const navItems: NavItem[] = [
     roles: ['CUSTOMER']
   },
   {
+    name: 'Family Members',
+    href: '/dashboard/customer/family-members',
+    icon: '👨‍👩‍👧‍👦',
+    roles: ['CUSTOMER']
+  },
+  {
     name: 'Messages',
     href: '/dashboard/customer/messages',
     icon: '💬',
     roles: ['CUSTOMER']
+  },
+  // Family Member specific items
+  {
+    name: 'Order Services',
+    href: '/dashboard/family-member/services',
+    icon: '🛒',
+    roles: ['FAMILY_MEMBER']
+  },
+  {
+    name: 'Appointments',
+    href: '/dashboard/family-member/appointments',
+    icon: '📅',
+    roles: ['FAMILY_MEMBER']
+  },
+  {
+    name: 'Service History',
+    href: '/dashboard/family-member/history',
+    icon: '📋',
+    roles: ['FAMILY_MEMBER']
+  },
+  {
+    name: 'Messages',
+    href: '/dashboard/family-member/messages',
+    icon: '💬',
+    roles: ['FAMILY_MEMBER']
+  },
+  // Caregiver specific items
+  {
+    name: 'Order Care Services',
+    href: '/dashboard/caregiver/services',
+    icon: '🛒',
+    roles: ['CAREGIVER']
+  },
+  {
+    name: 'Care Schedule',
+    href: '/dashboard/caregiver/schedule',
+    icon: '📅',
+    roles: ['CAREGIVER']
+  },
+  {
+    name: 'Care Notes',
+    href: '/dashboard/caregiver/notes',
+    icon: '📝',
+    roles: ['CAREGIVER']
+  },
+  {
+    name: 'Medication Log',
+    href: '/dashboard/caregiver/medications',
+    icon: '💊',
+    roles: ['CAREGIVER']
+  },
+  {
+    name: 'Messages',
+    href: '/dashboard/caregiver/messages',
+    icon: '💬',
+    roles: ['CAREGIVER']
   },
   // Provider specific items
   {
