@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
 
@@ -89,6 +90,20 @@ export default function LoginPage() {
       {/* Right side - Login Form */}
       <div className="lg:p-8 p-6">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          {/* Logo */}
+          <div className="flex justify-center mb-4">
+            <Link href="/">
+              <Image
+                src="/images/MyNestShield.png"
+                alt="MyNestShield Logo"
+                width={200}
+                height={60}
+                className="h-14 w-auto"
+                priority
+              />
+            </Link>
+          </div>
+
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
               Welcome back
