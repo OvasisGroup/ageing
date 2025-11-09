@@ -26,8 +26,13 @@ export default function PWAInstallPrompt() {
   }, []);
 
   useEffect(() => {
+    console.log('PWA Install Prompt - Component mounted');
+    console.log('Is Standalone:', isStandalone);
+    console.log('Is iOS:', isIOS);
+    
     // Don't show if already installed
     if (isStandalone) {
+      console.log('App already installed in standalone mode');
       return;
     }
 
@@ -36,11 +41,16 @@ export default function PWAInstallPrompt() {
     const dismissedTime = hasPromptBeenDismissed ? parseInt(hasPromptBeenDismissed) : 0;
     const daysSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60 * 24);
 
+    console.log('Prompt dismissed:', hasPromptBeenDismissed);
+    console.log('Days since dismissed:', daysSinceDismissed);
+
     // Show prompt if not dismissed or if 7 days have passed
     if (!hasPromptBeenDismissed || daysSinceDismissed > 7) {
       // For iOS, show after 3 seconds
       if (isIOS) {
+        console.log('Setting timer to show iOS prompt');
         const timer = setTimeout(() => {
+          console.log('Showing iOS prompt');
           setShowPrompt(true);
         }, 3000);
         return () => clearTimeout(timer);
@@ -48,11 +58,13 @@ export default function PWAInstallPrompt() {
 
       // For other browsers, listen for beforeinstallprompt event
       const handler = (e: Event) => {
+        console.log('beforeinstallprompt event fired');
         e.preventDefault();
         setDeferredPrompt(e as BeforeInstallPromptEvent);
         
         // Show prompt after 3 seconds
         setTimeout(() => {
+          console.log('Showing install prompt');
           setShowPrompt(true);
         }, 3000);
       };
@@ -62,6 +74,8 @@ export default function PWAInstallPrompt() {
       return () => {
         window.removeEventListener('beforeinstallprompt', handler);
       };
+    } else {
+      console.log('Prompt was dismissed recently');
     }
   }, [isIOS, isStandalone]);
 
