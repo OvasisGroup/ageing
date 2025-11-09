@@ -115,7 +115,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-md shadow-lg bg-background border border-border z-50"
+                  className="absolute right-0 md:right-0 left-auto md:left-auto -translate-x-1/2 md:translate-x-0 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-md shadow-lg bg-background border border-border z-50"
                 >
                   <div className="p-4 space-y-3">
                     <div className="text-sm font-semibold mb-2">
