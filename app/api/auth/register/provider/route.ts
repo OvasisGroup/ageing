@@ -29,6 +29,8 @@ const providerRegisterSchema = z.object({
   businessAddress: z.string()
     .min(10, 'Business address must be at least 10 characters long')
     .max(200, 'Business address must be at most 200 characters long'),
+  zipCode: z.string()
+    .regex(/^[0-9]{5}(-[0-9]{4})?$/, 'Please enter a valid ZIP code (e.g., 12345 or 12345-6789)'),
   licenseNumber: z.string()
     .min(5, 'License number must be at least 5 characters long')
     .max(50, 'License number must be at most 50 characters long')
@@ -73,7 +75,8 @@ export async function POST(request: NextRequest) {
       lastName, 
       phone, 
       businessName, 
-      businessAddress, 
+      businessAddress,
+      zipCode, 
       licenseNumber, 
       serviceType, 
       yearsOfExperience, 
@@ -117,6 +120,7 @@ export async function POST(request: NextRequest) {
         phone: phone || null,
         businessName: businessName || null,
         businessAddress: businessAddress || null,
+        zipCode: zipCode || null,
         licenseNumber: licenseNumber || null,
         serviceType: serviceType || null,
         yearsOfExperience: yearsOfExperience || null,
@@ -132,6 +136,7 @@ export async function POST(request: NextRequest) {
         phone: true,
         businessName: true,
         businessAddress: true,
+        zipCode: true,
         licenseNumber: true,
         serviceType: true,
         yearsOfExperience: true,

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { GooglePlacesAutocomplete } from '@/components/ui/google-places-autocomplete';
 import toast from 'react-hot-toast';
 
 export default function CustomerRegisterPage() {
@@ -18,7 +19,8 @@ export default function CustomerRegisterPage() {
     firstName: '',
     lastName: '',
     phone: '',
-    dateOfBirth: '',
+    address: '',
+    zipCode: '',
     subRole: '',
     parentCustomerEmail: ''
   });
@@ -26,12 +28,13 @@ export default function CustomerRegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const totalSteps = 3;
+  const totalSteps = 4;
 
   const stepTitles = [
     'Personal Information',
-    'Role & Contact Details',
-    'Account Security'
+    'Role Selection',
+    'Account Security',
+    'Contact Information'
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +49,7 @@ export default function CustomerRegisterPage() {
       case 1: // Personal Information
         return formData.firstName.trim() !== '' && 
                formData.lastName.trim() !== '';
-      case 2: // Contact Details & Role Selection
+      case 2: // Role Selection
         // If subrole is selected, parent customer email is required
         if ((formData.subRole === 'FAMILY_MEMBER' || formData.subRole === 'CAREGIVER') && 
             formData.parentCustomerEmail.trim() === '') {
@@ -59,16 +62,57 @@ export default function CustomerRegisterPage() {
                formData.password.trim() !== '' && 
                formData.confirmPassword.trim() !== '' &&
                formData.password === formData.confirmPassword;
+      case 4: // Contact Information (now required)
+        return formData.address.trim() !== '' && 
+               formData.zipCode.trim() !== '' && 
+               formData.phone.trim() !== '';
       default:
         return false;
     }
   };
 
   const nextStep = () => {
-    if (validateStep(currentStep) && currentStep < totalSteps) {
+    if (!validateStep(currentStep)) {
+      // Show specific error messages based on the step
+      switch (currentStep) {
+        case 1:
+          toast.error('Please enter your first and last name');
+          break;
+        case 2:
+          toast.error('Please enter the customer email address');
+          break;
+        case 3:
+          if (!formData.username.trim()) {
+            toast.error('Please enter a username');
+          } else if (!formData.email.trim()) {
+            toast.error('Please enter your email');
+          } else if (!formData.password.trim() || !formData.confirmPassword.trim()) {
+            toast.error('Please enter and confirm your password');
+          } else if (formData.password !== formData.confirmPassword) {
+            toast.error('Passwords do not match');
+          } else {
+            toast.error('Please fill in all required fields');
+          }
+          break;
+        case 4:
+          if (!formData.address.trim()) {
+            toast.error('Please select an address from the dropdown');
+          } else if (!formData.zipCode.trim()) {
+            toast.error('ZIP code is required. Please select an address to auto-populate it');
+          } else if (!formData.phone.trim()) {
+            toast.error('Please enter your phone number');
+          } else {
+            toast.error('Please complete all contact information');
+          }
+          break;
+        default:
+          toast.error('Please fill in all required fields');
+      }
+      return;
+    }
+    
+    if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
-    } else if (!validateStep(currentStep)) {
-      toast.error('Please fill in all required fields before proceeding.');
     }
   };
 
@@ -124,7 +168,7 @@ export default function CustomerRegisterPage() {
       case 2:
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-center mb-4">Contact Details & Role</h3>
+            <h3 className="text-lg font-medium text-center mb-4">Role Selection</h3>
             
             <div className="space-y-3">
               <label className="text-sm font-medium">
@@ -199,37 +243,8 @@ export default function CustomerRegisterPage() {
               )}
             </div>
             
-            <div className="border-t pt-4 mt-4">
-              <p className="text-sm font-medium mb-3">Additional Contact Information <span className="text-muted-foreground font-normal">(optional)</span></p>
-            <div>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleInputChange}
-                placeholder="Phone number (e.g., +1234567890)"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Optional. Use international format with country code (e.g., +1234567890)
-              </p>
-            </div>
-            <div>
-              <input
-                id="dateOfBirth"
-                name="dateOfBirth"
-                type="date"
-                value={formData.dateOfBirth}
-                onChange={handleInputChange}
-                placeholder="Date of birth (optional)"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </div>
-            </div>
-            
             <p className="text-sm text-muted-foreground text-center">
-              Role selection and contact details help us provide better personalized care.
+              Role selection helps us provide better personalized care.
             </p>
           </div>
         );
@@ -238,106 +253,179 @@ export default function CustomerRegisterPage() {
         return (
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-center mb-4">Account Security</h3>
-            <div>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                value={formData.username}
-                onChange={handleInputChange}
-                placeholder="Enter your username"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                required
-                minLength={3}
-                maxLength={20}
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                3-20 characters, letters, numbers, and underscores only
-              </p>
-            </div>
-            <div>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter your email address"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                required
-              />
-            </div>
-            <div>
-              <div className="relative">
+            
+            <div className="space-y-3">
+              <div>
                 <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  value={formData.password}
+                  id="username"
+                  name="username"
+                  type="text"
+                  value={formData.username}
                   onChange={handleInputChange}
-                  placeholder="Create a password"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Enter your username"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   required
-                  minLength={8}
+                  minLength={3}
+                  maxLength={20}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                      <line x1="1" y1="1" x2="23" y2="23"/>
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                      <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                  )}
-                </button>
+                <p className="text-xs text-muted-foreground mt-1">
+                  3-20 characters, letters, numbers, and underscores only
+                </p>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Min 8 characters, must include uppercase, lowercase, and number
-              </p>
-            </div>
-            <div>
-              <div className="relative">
+              <div>
                 <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={formData.confirmPassword}
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="Confirm your password"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Enter your email address"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                >
-                  {showConfirmPassword ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                      <line x1="1" y1="1" x2="23" y2="23"/>
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                      <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                  )}
-                </button>
+              </div>
+              <div>
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Create a password"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    required
+                    minLength={8}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                        <line x1="1" y1="1" x2="23" y2="23"/>
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Min 8 characters, must include uppercase, lowercase, and number
+                </p>
+              </div>
+              <div>
+                <div className="relative">
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    placeholder="Confirm your password"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  >
+                    {showConfirmPassword ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                        <line x1="1" y1="1" x2="23" y2="23"/>
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+              {formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                <p className="text-sm text-destructive">Passwords do not match</p>
+              )}
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-center mb-4">Contact Information</h3>
+            <p className="text-sm text-muted-foreground text-center mb-4">Please provide your contact details</p>
+            
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">
+                  Address <span className="text-red-500">*</span>
+                </label>
+                <GooglePlacesAutocomplete
+                  value={formData.address}
+                  onChange={(address) => {
+                    setFormData({ ...formData, address });
+                  }}
+                  onZipCodeChange={(zipCode) => {
+                    setFormData({ ...formData, zipCode });
+                  }}
+                  placeholder="Start typing your address..."
+                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {formData.address ? '✓ Address selected' : 'Select an address from the dropdown suggestions'}
+                </p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">
+                  ZIP Code <span className="text-red-500">*</span> {formData.zipCode && <span className="text-green-600 text-xs">✓ Auto-populated</span>}
+                </label>
+                <input
+                  id="zipCode"
+                  name="zipCode"
+                  type="text"
+                  value={formData.zipCode}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 12345 or 12345-6789"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  maxLength={10}
+                  required
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {formData.zipCode ? 'ZIP code from selected address' : 'Will be auto-filled when you select an address'}
+                </p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">
+                  Phone Number <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder="e.g., +1234567890"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  required
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  International format with country code (e.g., +1 for US)
+                </p>
               </div>
             </div>
-            {formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword && (
-              <p className="text-sm text-destructive">Passwords do not match</p>
-            )}
           </div>
         );
 
@@ -348,14 +436,29 @@ export default function CustomerRegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    
+    // Ensure we're on the last step
+    if (currentStep !== totalSteps) {
+      toast.error('Please complete all steps before submitting');
+      return;
+    }
+
+    // Validate all steps before submitting
+    for (let step = 1; step <= totalSteps; step++) {
+      if (!validateStep(step)) {
+        toast.error(`Please complete Step ${step}: ${stepTitles[step - 1]}`);
+        setCurrentStep(step);
+        return;
+      }
+    }
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
-      setIsLoading(false);
       return;
     }
+
+    setIsLoading(true);
 
     try {
       const response = await fetch('/api/auth/register/customer', {
@@ -369,8 +472,9 @@ export default function CustomerRegisterPage() {
           password: formData.password,
           firstName: formData.firstName,
           lastName: formData.lastName,
-          phone: formData.phone.trim() || undefined,
-          dateOfBirth: formData.dateOfBirth || undefined,
+          phone: formData.phone,
+          address: formData.address,
+          zipCode: formData.zipCode,
           subRole: formData.subRole || undefined,
           parentCustomerEmail: formData.parentCustomerEmail.trim() || undefined
         }),
@@ -388,7 +492,8 @@ export default function CustomerRegisterPage() {
           firstName: '',
           lastName: '',
           phone: '',
-          dateOfBirth: '',
+          address: '',
+          zipCode: '',
           subRole: '',
           parentCustomerEmail: ''
         });
@@ -462,13 +567,13 @@ export default function CustomerRegisterPage() {
             {renderStepContent()}
 
             {/* Navigation Buttons */}
-            <div className="flex justify-between pt-6">
+            <div className="flex justify-between gap-4 pt-6">
               <Button
                 type="button"
                 variant="outline"
                 onClick={prevStep}
                 disabled={currentStep === 1}
-                className="w-24"
+                className="w-28"
               >
                 Previous
               </Button>
@@ -477,12 +582,16 @@ export default function CustomerRegisterPage() {
                 <Button
                   type="button"
                   onClick={nextStep}
-                  className="w-24"
+                  className="w-28"
                 >
                   Next
                 </Button>
               ) : (
-                <Button type="submit" className="w-32" disabled={isLoading}>
+                <Button 
+                  type="submit" 
+                  className="w-32" 
+                  disabled={isLoading || !validateStep(currentStep)}
+                >
                   {isLoading ? 'Creating...' : 'Create Account'}
                 </Button>
               )}

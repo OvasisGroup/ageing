@@ -4,6 +4,25 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import {
+  Home,
+  Search,
+  Calendar,
+  Users,
+  MessageSquare,
+  ShoppingCart,
+  ClipboardList,
+  FileText,
+  Pill,
+  Building2,
+  DollarSign,
+  BarChart3,
+  User,
+  Settings,
+  FolderTree,
+  Mail,
+} from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 type UserRole = 'CUSTOMER' | 'PROVIDER' | 'ADMIN' | 'FAMILY_MEMBER' | 'CAREGIVER';
 
@@ -16,7 +35,7 @@ interface DashboardSidebarProps {
 interface NavItem {
   name: string;
   href: string;
-  icon: string;
+  icon: LucideIcon;
   roles: UserRole[];
 }
 
@@ -24,163 +43,169 @@ const navItems: NavItem[] = [
   {
     name: 'Dashboard',
     href: '/dashboard',
-    icon: '🏠',
+    icon: Home,
     roles: ['CUSTOMER', 'PROVIDER', 'ADMIN', 'FAMILY_MEMBER', 'CAREGIVER']
   },
   // Customer specific items
   {
     name: 'Find Services',
     href: '/dashboard/customer/services',
-    icon: '🔍',
+    icon: Search,
     roles: ['CUSTOMER']
   },
   {
     name: 'My Bookings',
     href: '/dashboard/customer/bookings',
-    icon: '📅',
+    icon: Calendar,
     roles: ['CUSTOMER']
   },
   {
     name: 'Family Members',
     href: '/dashboard/customer/family-members',
-    icon: '👨‍👩‍👧‍👦',
+    icon: Users,
     roles: ['CUSTOMER']
   },
   {
     name: 'Messages',
     href: '/dashboard/customer/messages',
-    icon: '💬',
+    icon: MessageSquare,
     roles: ['CUSTOMER']
   },
   // Family Member specific items
   {
     name: 'Order Services',
     href: '/dashboard/family-member/services',
-    icon: '🛒',
+    icon: ShoppingCart,
     roles: ['FAMILY_MEMBER']
   },
   {
     name: 'Appointments',
     href: '/dashboard/family-member/appointments',
-    icon: '📅',
+    icon: Calendar,
     roles: ['FAMILY_MEMBER']
   },
   {
     name: 'Service History',
     href: '/dashboard/family-member/history',
-    icon: '📋',
+    icon: ClipboardList,
     roles: ['FAMILY_MEMBER']
   },
   {
     name: 'Messages',
     href: '/dashboard/family-member/messages',
-    icon: '💬',
+    icon: MessageSquare,
     roles: ['FAMILY_MEMBER']
   },
   // Caregiver specific items
   {
     name: 'Order Care Services',
     href: '/dashboard/caregiver/services',
-    icon: '🛒',
+    icon: ShoppingCart,
     roles: ['CAREGIVER']
   },
   {
     name: 'Care Schedule',
     href: '/dashboard/caregiver/schedule',
-    icon: '📅',
+    icon: Calendar,
     roles: ['CAREGIVER']
   },
   {
     name: 'Care Notes',
     href: '/dashboard/caregiver/notes',
-    icon: '📝',
+    icon: FileText,
     roles: ['CAREGIVER']
   },
   {
     name: 'Medication Log',
     href: '/dashboard/caregiver/medications',
-    icon: '💊',
+    icon: Pill,
     roles: ['CAREGIVER']
   },
   {
     name: 'Messages',
     href: '/dashboard/caregiver/messages',
-    icon: '💬',
+    icon: MessageSquare,
     roles: ['CAREGIVER']
   },
   // Provider specific items
   {
     name: 'My Clients',
     href: '/dashboard/provider/clients',
-    icon: '👥',
+    icon: Users,
     roles: ['PROVIDER']
   },
   {
     name: 'Schedule',
     href: '/dashboard/provider/schedule',
-    icon: '📅',
+    icon: Calendar,
     roles: ['PROVIDER']
   },
   {
     name: 'Messages',
     href: '/dashboard/provider/messages',
-    icon: '💬',
+    icon: MessageSquare,
     roles: ['PROVIDER']
   },
   {
     name: 'Earnings',
     href: '/dashboard/provider/earnings',
-    icon: '💰',
+    icon: DollarSign,
     roles: ['PROVIDER']
   },
   // Admin specific items
   {
     name: 'Users',
     href: '/dashboard/admin/users',
-    icon: '👥',
+    icon: Users,
     roles: ['ADMIN']
   },
   {
     name: 'Providers',
     href: '/dashboard/admin/providers',
-    icon: '🏢',
+    icon: Building2,
+    roles: ['ADMIN']
+  },
+  {
+    name: 'Categories',
+    href: '/dashboard/admin/categories',
+    icon: FolderTree,
     roles: ['ADMIN']
   },
   {
     name: 'Inquiries',
     href: '/dashboard/admin/inquiries',
-    icon: '📧',
+    icon: Mail,
     roles: ['ADMIN']
   },
   {
     name: 'Analytics',
     href: '/dashboard/admin/analytics',
-    icon: '📊',
+    icon: BarChart3,
     roles: ['ADMIN']
   },
   {
     name: 'Profile',
     href: '/dashboard/admin/profile',
-    icon: '👤',
+    icon: User,
     roles: ['ADMIN']
   },
   {
     name: 'Settings',
     href: '/dashboard/admin/settings',
-    icon: '⚙️',
+    icon: Settings,
     roles: ['ADMIN']
   },
   // Common items
   {
     name: 'Profile',
     href: '/dashboard/profile',
-    icon: '👤',
+    icon: User,
     roles: ['CUSTOMER', 'PROVIDER']
   },
   {
     name: 'Settings',
     href: '/dashboard/settings',
-    icon: '⚙️',
+    icon: Settings,
     roles: ['CUSTOMER', 'PROVIDER']
   }
 ];
@@ -258,6 +283,7 @@ export default function DashboardSidebar({ userRole, isOpen, onClose }: Dashboar
             {filteredNavItems.map((item) => {
               const href = item.href === '/dashboard' ? getBaseDashboardPath(userRole) : item.href;
               const active = isActive(item.href);
+              const IconComponent = item.icon;
               
               return (
                 <Link
@@ -272,7 +298,7 @@ export default function DashboardSidebar({ userRole, isOpen, onClose }: Dashboar
                     }
                   `}
                 >
-                  <span className="text-lg">{item.icon}</span>
+                  <IconComponent className="w-5 h-5" />
                   <span>{item.name}</span>
                 </Link>
               );

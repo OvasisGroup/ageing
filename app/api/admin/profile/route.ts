@@ -26,8 +26,9 @@ export async function GET(request: NextRequest) {
         firstName: true,
         lastName: true,
         phone: true,
+        address: true,
+        zipCode: true,
         role: true,
-        dateOfBirth: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -61,7 +62,7 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, firstName, lastName, email, phone, dateOfBirth } = body;
+    const { userId, firstName, lastName, email, phone, address, zipCode } = body;
 
     if (!userId) {
       return NextResponse.json(
@@ -111,7 +112,8 @@ export async function PUT(request: NextRequest) {
         lastName,
         email,
         phone,
-        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
+        address,
+        zipCode,
         updatedAt: new Date(),
       },
       select: {
@@ -121,8 +123,9 @@ export async function PUT(request: NextRequest) {
         firstName: true,
         lastName: true,
         phone: true,
+        address: true,
+        zipCode: true,
         role: true,
-        dateOfBirth: true,
         createdAt: true,
         updatedAt: true,
       },

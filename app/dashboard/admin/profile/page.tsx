@@ -12,8 +12,9 @@ type AdminProfile = {
   firstName: string | null;
   lastName: string | null;
   phone: string | null;
+  address: string | null;
+  zipCode: string | null;
   role: string;
-  dateOfBirth: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -29,7 +30,8 @@ export default function AdminProfilePage() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [address, setAddress] = useState('');
+  const [zipCode, setZipCode] = useState('');
 
   useEffect(() => {
     fetchProfile();
@@ -57,7 +59,8 @@ export default function AdminProfilePage() {
         setLastName(data.lastName || '');
         setEmail(data.email || '');
         setPhone(data.phone || '');
-        setDateOfBirth(data.dateOfBirth ? data.dateOfBirth.split('T')[0] : '');
+        setAddress(data.address || '');
+        setZipCode(data.zipCode || '');
       } else {
         toast.error('Failed to load profile');
       }
@@ -87,7 +90,8 @@ export default function AdminProfilePage() {
           lastName,
           email,
           phone,
-          dateOfBirth: dateOfBirth || null,
+          address,
+          zipCode,
         }),
       });
 
@@ -134,7 +138,8 @@ export default function AdminProfilePage() {
       setLastName(profile.lastName || '');
       setEmail(profile.email || '');
       setPhone(profile.phone || '');
-      setDateOfBirth(profile.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '');
+      setAddress(profile.address || '');
+      setZipCode(profile.zipCode || '');
     }
     setIsEditing(false);
   };
@@ -147,25 +152,6 @@ export default function AdminProfilePage() {
       hour: '2-digit',
       minute: '2-digit'
     });
-  };
-
-  const formatDateOnly = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const calculateAge = (dateOfBirth: string) => {
-    const birth = new Date(dateOfBirth);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    return age;
   };
 
   if (loading) {
@@ -326,13 +312,28 @@ export default function AdminProfilePage() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Date of Birth
+                    Address
                   </label>
                   <input
-                    type="date"
-                    value={dateOfBirth}
-                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    type="text"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Enter your address"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    ZIP Code
+                  </label>
+                  <input
+                    type="text"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Enter ZIP code"
+                    maxLength={10}
                   />
                 </div>
 
@@ -354,75 +355,89 @@ export default function AdminProfilePage() {
               </div>
             ) : (
               // View Mode
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">First Name</label>
-                    <p className="text-sm mt-1">{firstName || 'Not provided'}</p>
+              <div className="space-y-8">
+                {/* Personal Information */}
+                <div>
+                  <h3 className="text-base font-semibold mb-4 pb-2 border-b">Personal Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">First Name</label>
+                      <p className="text-base mt-1 font-medium">{firstName || 'Not provided'}</p>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Last Name</label>
+                      <p className="text-base mt-1 font-medium">{lastName || 'Not provided'}</p>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Username</label>
+                      <p className="text-base mt-1 font-mono font-medium">@{profile.username}</p>
+                    </div>
                   </div>
-                  
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">Last Name</label>
-                    <p className="text-sm mt-1">{lastName || 'Not provided'}</p>
+                </div>
+
+                {/* Contact Information */}
+                <div>
+                  <h3 className="text-base font-semibold mb-4 pb-2 border-b">Contact Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Email Address</label>
+                      <p className="text-base mt-1">
+                        <a href={`mailto:${email}`} className="text-primary hover:underline font-medium">
+                          {email}
+                        </a>
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Phone Number</label>
+                      <p className="text-base mt-1">
+                        {phone ? (
+                          <a href={`tel:${phone}`} className="text-primary hover:underline font-medium">
+                            {phone}
+                          </a>
+                        ) : (
+                          <span className="text-muted-foreground">Not provided</span>
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">ZIP Code</label>
+                      <p className="text-base mt-1 font-medium">{zipCode || <span className="text-muted-foreground">Not provided</span>}</p>
+                    </div>
+
+                    <div className="md:col-span-2 lg:col-span-3">
+                      <label className="text-sm font-medium text-muted-foreground">Address</label>
+                      <p className="text-base mt-1 font-medium">{address || <span className="text-muted-foreground">Not provided</span>}</p>
+                    </div>
                   </div>
                 </div>
 
+                {/* Account Information */}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Username</label>
-                  <p className="text-sm mt-1 font-mono">@{profile.username}</p>
-                </div>
+                  <h3 className="text-base font-semibold mb-4 pb-2 border-b">Account Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Account Role</label>
+                      <p className="text-base mt-1">
+                        <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                          {profile.role}
+                        </span>
+                      </p>
+                    </div>
 
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Email Address</label>
-                  <p className="text-sm mt-1">
-                    <a href={`mailto:${email}`} className="text-primary hover:underline">
-                      {email}
-                    </a>
-                  </p>
-                </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Account Created</label>
+                      <p className="text-base mt-1 font-medium">{formatDate(profile.createdAt)}</p>
+                    </div>
 
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Phone Number</label>
-                  <p className="text-sm mt-1">
-                    {phone ? (
-                      <a href={`tel:${phone}`} className="text-primary hover:underline">
-                        {phone}
-                      </a>
-                    ) : (
-                      'Not provided'
-                    )}
-                  </p>
-                </div>
-
-                {dateOfBirth && (
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">Date of Birth</label>
-                    <p className="text-sm mt-1">
-                      {formatDateOnly(dateOfBirth)} 
-                      <span className="text-muted-foreground ml-2">
-                        (Age: {calculateAge(dateOfBirth)})
-                      </span>
-                    </p>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Last Updated</label>
+                      <p className="text-base mt-1 font-medium">{formatDate(profile.updatedAt)}</p>
+                    </div>
                   </div>
-                )}
-
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Account Role</label>
-                  <p className="text-sm mt-1">
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                      {profile.role}
-                    </span>
-                  </p>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Account Created</label>
-                  <p className="text-sm mt-1">{formatDate(profile.createdAt)}</p>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Last Updated</label>
-                  <p className="text-sm mt-1">{formatDate(profile.updatedAt)}</p>
                 </div>
               </div>
             )}

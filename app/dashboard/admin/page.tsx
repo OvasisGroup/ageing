@@ -85,10 +85,15 @@ export default function AdminDashboard() {
                 Manage Inquiries
               </Button>
             </Link>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">📊</span>
-              Analytics
-            </Button>
+            <Link href="/dashboard/admin/categories">
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center w-full"
+              >
+                <span className="text-lg mb-1">�</span>
+                Manage Categories
+              </Button>
+            </Link>
             <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
               <span className="text-lg mb-1">⚙️</span>
               System Settings

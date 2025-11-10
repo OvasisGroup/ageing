@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { GooglePlacesAutocomplete } from '@/components/ui/google-places-autocomplete';
 import toast from 'react-hot-toast';
 
 export default function ProviderRegisterPage() {
@@ -20,12 +21,15 @@ export default function ProviderRegisterPage() {
     phone: '',
     businessName: '',
     businessAddress: '',
+    zipCode: '',
     licenseNumber: '',
     serviceType: 'OTHER' as 'HOME_CARE' | 'MEDICAL_CARE' | 'COMPANIONSHIP' | 'HOUSEKEEPING' | 'TRANSPORTATION' | 'OTHER',
     yearsOfExperience: '',
     description: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const totalSteps = 4;
 
@@ -51,7 +55,8 @@ export default function ProviderRegisterPage() {
                formData.phone.trim() !== '';
       case 2: // Business Information
         return formData.businessName.trim() !== '' && 
-               formData.businessAddress.trim() !== '';
+               formData.businessAddress.trim() !== '' &&
+               formData.zipCode.trim() !== '';
       case 3: // Service Details
         return true; // Service type has a default value
       case 4: // Account Security
@@ -66,10 +71,47 @@ export default function ProviderRegisterPage() {
   };
 
   const nextStep = () => {
-    if (validateStep(currentStep) && currentStep < totalSteps) {
+    if (!validateStep(currentStep)) {
+      // Show specific error messages based on the step
+      switch (currentStep) {
+        case 1:
+          toast.error('Please enter your first name, last name, and phone number');
+          break;
+        case 2:
+          if (!formData.businessName.trim()) {
+            toast.error('Please enter your business name');
+          } else if (!formData.businessAddress.trim()) {
+            toast.error('Please select your business address from the dropdown');
+          } else if (!formData.zipCode.trim()) {
+            toast.error('ZIP code is required. Please select an address to auto-populate it');
+          } else {
+            toast.error('Please complete all business information');
+          }
+          break;
+        case 3:
+          toast.error('Please complete service details');
+          break;
+        case 4:
+          if (!formData.username.trim()) {
+            toast.error('Please enter a username');
+          } else if (!formData.email.trim()) {
+            toast.error('Please enter your email');
+          } else if (!formData.password.trim() || !formData.confirmPassword.trim()) {
+            toast.error('Please enter and confirm your password');
+          } else if (formData.password !== formData.confirmPassword) {
+            toast.error('Passwords do not match');
+          } else {
+            toast.error('Please fill in all required fields');
+          }
+          break;
+        default:
+          toast.error('Please fill in all required fields');
+      }
+      return;
+    }
+    
+    if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
-    } else if (!validateStep(currentStep)) {
-      toast.error('Please fill in all required fields before proceeding.');
     }
   };
 
@@ -143,16 +185,43 @@ export default function ProviderRegisterPage() {
               />
             </div>
             <div>
-              <input
-                id="businessAddress"
-                name="businessAddress"
-                type="text"
+              <label className="text-sm font-medium mb-1.5 block">
+                Business Address <span className="text-red-500">*</span>
+              </label>
+              <GooglePlacesAutocomplete
                 value={formData.businessAddress}
-                onChange={handleInputChange}
-                placeholder="Business address"
+                onChange={(address) => {
+                  setFormData({ ...formData, businessAddress: address });
+                }}
+                onZipCodeChange={(zipCode) => {
+                  setFormData({ ...formData, zipCode });
+                }}
+                placeholder="Start typing your business address..."
+                apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                {formData.businessAddress ? '✓ Address selected' : 'Select an address from the dropdown suggestions'}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">
+                ZIP Code <span className="text-red-500">*</span> {formData.zipCode && <span className="text-green-600 text-xs">✓ Auto-populated</span>}
+              </label>
+              <input
+                id="zipCode"
+                name="zipCode"
+                type="text"
+                value={formData.zipCode}
+                onChange={handleInputChange}
+                placeholder="e.g., 12345 or 12345-6789"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                maxLength={10}
                 required
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                {formData.zipCode ? 'ZIP code from selected address' : 'Will be auto-filled when you select an address'}
+              </p>
             </div>
             <div>
               <input
@@ -244,28 +313,68 @@ export default function ProviderRegisterPage() {
               />
             </div>
             <div>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Create a password"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                required
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Create a password"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                      <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
             <div>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                placeholder="Confirm your password"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                required
-              />
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  placeholder="Confirm your password"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                >
+                  {showConfirmPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                      <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
             {formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword && (
               <p className="text-sm text-destructive">Passwords do not match</p>
@@ -304,6 +413,7 @@ export default function ProviderRegisterPage() {
           phone: formData.phone,
           businessName: formData.businessName,
           businessAddress: formData.businessAddress,
+          zipCode: formData.zipCode,
           licenseNumber: formData.licenseNumber || undefined,
           serviceType: formData.serviceType,
           yearsOfExperience: formData.yearsOfExperience ? parseInt(formData.yearsOfExperience) : undefined,
@@ -325,6 +435,7 @@ export default function ProviderRegisterPage() {
           phone: '',
           businessName: '',
           businessAddress: '',
+          zipCode: '',
           licenseNumber: '',
           serviceType: 'OTHER',
           yearsOfExperience: '',

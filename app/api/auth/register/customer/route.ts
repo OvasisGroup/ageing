@@ -22,11 +22,13 @@ const customerRegisterSchema = z.object({
     .min(2, 'Last name must be at least 2 characters long')
     .max(50, 'Last name must be at most 50 characters long'),
   phone: z.string()
-    .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number')
-    .optional(),
-  dateOfBirth: z.string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date of birth must be in YYYY-MM-DD format')
-    .optional(),
+    .min(10, 'Phone number must be at least 10 digits')
+    .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number in international format'),
+  address: z.string()
+    .min(5, 'Address must be at least 5 characters long')
+    .max(200, 'Address must be at most 200 characters long'),
+  zipCode: z.string()
+    .regex(/^[0-9]{5}(-[0-9]{4})?$/, 'Please enter a valid ZIP code (e.g., 12345 or 12345-6789)'),
   subRole: z.enum(['FAMILY_MEMBER', 'CAREGIVER'])
     .optional(),
   parentCustomerEmail: z.string()
@@ -64,7 +66,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { username, email, password, firstName, lastName, phone, dateOfBirth, subRole, parentCustomerEmail } = validationResult.data;
+    const { username, email, password, firstName, lastName, phone, address, zipCode, subRole, parentCustomerEmail } = validationResult.data;
 
     // If registering as a subrole, verify parent customer exists
     let parentUserId: string | null = null;
@@ -126,7 +128,8 @@ export async function POST(request: NextRequest) {
         firstName,
         lastName,
         phone: phone || null,
-        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
+        address: address || null,
+        zipCode: zipCode || null,
         subRole: subRole || null,
         parentUserId: parentUserId,
       },
@@ -139,7 +142,8 @@ export async function POST(request: NextRequest) {
         firstName: true,
         lastName: true,
         phone: true,
-        dateOfBirth: true,
+        address: true,
+        zipCode: true,
         parentUserId: true,
         createdAt: true,
         updatedAt: true,

@@ -25,9 +25,8 @@ model User {
   firstName           String?
   lastName            String?
   phone               String?
-  
-  // Customer-specific fields
-  dateOfBirth         DateTime?
+  address             String?
+  zipCode             String?
   
   // Provider-specific fields
   businessName        String?
@@ -109,4 +108,33 @@ enum InquiryPriority {
   MEDIUM
   HIGH
   URGENT
+}
+
+model Category {
+  id            String        @id @default(cuid())
+  title         String
+  description   String?       @db.Text
+  image         String?
+  slug          String        @unique
+  isActive      Boolean       @default(true)
+  subcategories Subcategory[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("categories")
+}
+
+model Subcategory {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  image       String?
+  slug        String   @unique
+  isActive    Boolean  @default(true)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("subcategories")
 }
