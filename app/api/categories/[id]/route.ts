@@ -5,11 +5,12 @@ import { saveImage, deleteImage, generateSlug, CATEGORIES_DIR } from '@/lib/uplo
 // GET - Fetch a single category by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const category = await prisma.category.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         subcategories: true,
       },
@@ -35,9 +36,10 @@ export async function GET(
 // PUT - Update a category
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const formData = await request.formData();
     
     const title = formData.get('title') as string;
@@ -48,7 +50,7 @@ export async function PUT(
 
     // Check if category exists
     const existingCategory = await prisma.category.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingCategory) {
@@ -68,7 +70,7 @@ export async function PUT(
         where: { slug },
       });
 
-      if (slugExists && slugExists.id !== params.id) {
+      if (slugExists && slugExists.id !== id) {
         return NextResponse.json(
           { error: 'A category with this title already exists' },
           { status: 409 }
@@ -95,7 +97,7 @@ export async function PUT(
 
     // Update category
     const category = await prisma.category.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: title || existingCategory.title,
         description: description !== undefined ? description : existingCategory.description,

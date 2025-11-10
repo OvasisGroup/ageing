@@ -5,11 +5,12 @@ import { saveImage, deleteImage, generateSlug, SUBCATEGORIES_DIR } from '@/lib/u
 // GET - Fetch a single subcategory by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const subcategory = await prisma.subcategory.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         category: true,
       },
@@ -35,9 +36,10 @@ export async function GET(
 // PUT - Update a subcategory
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const formData = await request.formData();
     
     const title = formData.get('title') as string;
@@ -49,7 +51,7 @@ export async function PUT(
 
     // Check if subcategory exists
     const existingSubcategory = await prisma.subcategory.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingSubcategory) {
@@ -83,7 +85,7 @@ export async function PUT(
         where: { slug },
       });
 
-      if (slugExists && slugExists.id !== params.id) {
+      if (slugExists && slugExists.id !== id) {
         return NextResponse.json(
           { error: 'A subcategory with this title already exists' },
           { status: 409 }
@@ -110,7 +112,7 @@ export async function PUT(
 
     // Update subcategory
     const subcategory = await prisma.subcategory.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: title || existingSubcategory.title,
         description: description !== undefined ? description : existingSubcategory.description,
