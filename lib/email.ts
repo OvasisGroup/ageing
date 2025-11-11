@@ -131,7 +131,7 @@ Your verification code is: ${otp}
 
 This code will expire in 10 minutes. Please enter it on the verification page to complete your registration.
 
-If you didn't create an account with MyNestShield, please ignore this email.
+If you didn't create an account with MyNestShield, please ignore this email and close.
 
 ---
 This is an automated message from MyNestShield. Please do not reply to this email.
