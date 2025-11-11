@@ -198,9 +198,15 @@ const navItems: NavItem[] = [
   // Common items
   {
     name: 'Profile',
-    href: '/dashboard/profile',
+    href: '/dashboard/customer/profile',
     icon: User,
-    roles: ['CUSTOMER', 'PROVIDER']
+    roles: ['CUSTOMER']
+  },
+  {
+    name: 'Profile',
+    href: '/dashboard/provider/profile',
+    icon: User,
+    roles: ['PROVIDER']
   },
   {
     name: 'Settings',
