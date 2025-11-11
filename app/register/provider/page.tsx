@@ -154,16 +154,23 @@ export default function ProviderRegisterPage() {
               </div>
             </div>
             <div>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleInputChange}
-                placeholder="Phone number"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                required
-              />
+                            <div>
+                <label className="block text-sm font-medium mb-2">
+                  Phone Number <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  placeholder="e.g., +1 (555) 123-4567 or +44 20 1234 5678"
+                  required
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  International format with country code (e.g., +1 for US, +44 for UK)
+                </p>
+              </div>
             </div>
           </div>
         );

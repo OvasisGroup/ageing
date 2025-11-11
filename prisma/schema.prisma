@@ -42,6 +42,27 @@ model User {
   yearsOfExperience   Int?
   description         String?     @db.Text
   
+  // Profile fields
+  profilePhoto        String?
+  vettedStatus        VettedStatus @default(NOT_VETTED)
+  vettedAt            DateTime?
+  vettedBy            String?
+  
+  // Insurance Information
+  insuranceProvider   String?
+  insurancePolicyNumber String?
+  insuranceExpiryDate DateTime?
+  insuranceDocuments  String[]    @default([])
+  
+  // Workers Compensation Insurance
+  workersCompProvider String?
+  workersCompPolicyNumber String?
+  workersCompExpiryDate DateTime?
+  workersCompDocuments String[]   @default([])
+  
+  // Certifications
+  certifications      Json[]      @default([])
+  
   // SubRole relationships
   parentUserId        String?
   parentUser          User?       @relation("UserSubRoles", fields: [parentUserId], references: [id], onDelete: Cascade)
@@ -74,6 +95,13 @@ enum ServiceType {
   HOUSEKEEPING
   TRANSPORTATION
   OTHER
+}
+
+enum VettedStatus {
+  NOT_VETTED
+  PENDING_REVIEW
+  VETTED
+  REJECTED
 }
 
 model NewsletterSubscription {

@@ -5,18 +5,18 @@ import { writeFile } from 'fs/promises';
 export const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
 export const CATEGORIES_DIR = path.join(UPLOAD_DIR, 'categories');
 export const SUBCATEGORIES_DIR = path.join(UPLOAD_DIR, 'subcategories');
+export const PROFILES_DIR = path.join(UPLOAD_DIR, 'profiles');
+export const INSURANCE_DIR = path.join(UPLOAD_DIR, 'insurance');
+export const CERTIFICATIONS_DIR = path.join(UPLOAD_DIR, 'certifications');
 
 // Ensure upload directories exist
 export function ensureUploadDirs() {
-  if (!fs.existsSync(UPLOAD_DIR)) {
-    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(CATEGORIES_DIR)) {
-    fs.mkdirSync(CATEGORIES_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(SUBCATEGORIES_DIR)) {
-    fs.mkdirSync(SUBCATEGORIES_DIR, { recursive: true });
-  }
+  const dirs = [UPLOAD_DIR, CATEGORIES_DIR, SUBCATEGORIES_DIR, PROFILES_DIR, INSURANCE_DIR, CERTIFICATIONS_DIR];
+  dirs.forEach(dir => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  });
 }
 
 // Save image file

@@ -85,9 +85,10 @@ export function GooglePlacesAutocomplete({
       type="text"
       value={inputValue}
       onChange={(e) => {
-        setInputValue(e.target.value);
-        // Only call onChange when user manually types (not from autocomplete)
-        // This prevents clearing the formatted address
+        const newValue = e.target.value;
+        setInputValue(newValue);
+        // Allow manual entry - call onChange so the value is saved
+        onChange(newValue);
       }}
       placeholder={placeholder}
       className={className}

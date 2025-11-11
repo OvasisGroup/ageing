@@ -23,8 +23,8 @@ const customerRegisterSchema = z.object({
     .min(2, 'Last name must be at least 2 characters long')
     .max(50, 'Last name must be at most 50 characters long'),
   phone: z.string()
-    .min(10, 'Phone number must be at least 10 digits')
-    .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number in international format'),
+    .min(10, 'Phone number must be at least 10 characters')
+    .max(20, 'Phone number must be at most 20 characters'),
   address: z.string()
     .min(5, 'Address must be at least 5 characters long')
     .max(200, 'Address must be at most 200 characters long'),

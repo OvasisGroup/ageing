@@ -23,12 +23,13 @@ const providerRegisterSchema = z.object({
     .min(2, 'Last name must be at least 2 characters long')
     .max(50, 'Last name must be at most 50 characters long'),
   phone: z.string()
-    .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number'),
+    .min(10, 'Phone number must be at least 10 characters')
+    .max(20, 'Phone number must be at most 20 characters'),
   businessName: z.string()
     .min(2, 'Business name must be at least 2 characters long')
     .max(100, 'Business name must be at most 100 characters long'),
   businessAddress: z.string()
-    .min(10, 'Business address must be at least 10 characters long')
+    .min(5, 'Business address must be at least 5 characters long')
     .max(200, 'Business address must be at most 200 characters long'),
   zipCode: z.string()
     .regex(/^[0-9]{5}(-[0-9]{4})?$/, 'Please enter a valid ZIP code (e.g., 12345 or 12345-6789)'),
