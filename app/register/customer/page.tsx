@@ -483,7 +483,7 @@ export default function CustomerRegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success('Customer account created successfully! Redirecting to login...');
+        toast.success('Account created! Please check your email for verification code.');
         setFormData({
           username: '',
           email: '',
@@ -497,9 +497,9 @@ export default function CustomerRegisterPage() {
           subRole: '',
           parentCustomerEmail: ''
         });
-        // Redirect to login page after a short delay
+        // Redirect to verification page
         setTimeout(() => {
-          router.push('/login');
+          router.push(`/verify-email?email=${encodeURIComponent(data.user.email)}`);
         }, 2000);
       } else {
         toast.error(data.error || 'Registration failed');

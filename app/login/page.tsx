@@ -70,6 +70,15 @@ export default function LoginPage() {
           router.push(redirectPath);
         }, 1500);
       } else {
+        // Check if email verification is required
+        if (data.requiresVerification && data.email) {
+          toast.error(data.error || 'Email not verified');
+          setTimeout(() => {
+            router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+          }, 1500);
+          return;
+        }
+        
         toast.error(data.error || 'Login failed');
         if (data.details) {
           const errors = data.details.map((d: { field: string; message: string }) => `${d.field}: ${d.message}`).join(', ');

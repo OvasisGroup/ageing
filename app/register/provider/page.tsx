@@ -424,7 +424,7 @@ export default function ProviderRegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success('Provider account created successfully! Redirecting to login...');
+        toast.success('Account created! Please check your email for verification code.');
         setFormData({
           username: '',
           email: '',
@@ -443,9 +443,9 @@ export default function ProviderRegisterPage() {
         });
         // Reset to first step after successful registration
         setCurrentStep(1);
-        // Redirect to login page after a short delay
+        // Redirect to verification page
         setTimeout(() => {
-          router.push('/login');
+          router.push(`/verify-email?email=${encodeURIComponent(data.user.email)}`);
         }, 2000);
       } else {
         const errorMessage = data.error || 'Registration failed';

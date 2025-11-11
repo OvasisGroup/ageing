@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
         phone: true,
         businessName: true,
         serviceType: true,
+        emailVerified: true,
         createdAt: true,
         updatedAt: true
       }
@@ -53,6 +54,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
+      );
+    }
+
+    // Check if email is verified
+    if (!user.emailVerified) {
+      return NextResponse.json(
+        { 
+          error: 'Email not verified. Please verify your email before logging in.',
+          requiresVerification: true,
+          email: user.email
+        },
+        { status: 403 }
       );
     }
 

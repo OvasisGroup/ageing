@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { generateOTP, getOTPExpiry, sendVerificationEmail } from '@/lib/email';
 
 // Validation schema for customer registration data
 const customerRegisterSchema = z.object({
@@ -118,6 +119,10 @@ export async function POST(request: NextRequest) {
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    // Generate OTP for email verification
+    const otp = generateOTP();
+    const otpExpiry = getOTPExpiry();
+
     // Create new customer user in database
     const newUser = await prisma.user.create({
       data: {
@@ -132,6 +137,9 @@ export async function POST(request: NextRequest) {
         zipCode: zipCode || null,
         subRole: subRole || null,
         parentUserId: parentUserId,
+        emailVerified: false,
+        verificationToken: otp,
+        verificationTokenExpiry: otpExpiry,
       },
       select: {
         id: true,
@@ -145,15 +153,20 @@ export async function POST(request: NextRequest) {
         address: true,
         zipCode: true,
         parentUserId: true,
+        emailVerified: true,
         createdAt: true,
         updatedAt: true,
       }
     });
+
+    // Send verification email
+    await sendVerificationEmail(email, otp, username);
     
     return NextResponse.json(
       {
-        message: 'Customer account created successfully',
-        user: newUser
+        message: 'Customer account created successfully. Please check your email for the verification code.',
+        user: newUser,
+        requiresVerification: true
       },
       { status: 201 }
     );
