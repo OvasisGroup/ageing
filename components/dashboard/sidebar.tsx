@@ -216,9 +216,15 @@ const navItems: NavItem[] = [
   },
   {
     name: 'Settings',
-    href: '/dashboard/settings',
+    href: '/dashboard/customer/settings',
     icon: Settings,
-    roles: ['CUSTOMER', 'PROVIDER']
+    roles: ['CUSTOMER']
+  },
+  {
+    name: 'Settings',
+    href: '/dashboard/provider/settings',
+    icon: Settings,
+    roles: ['PROVIDER']
   }
 ];
 
