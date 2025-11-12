@@ -104,32 +104,6 @@ export default function FamilyMemberDashboard() {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-card p-6 rounded-lg border border-border">
-          <h2 className="text-xl font-semibold mb-4">Quick Actions for {customer?.firstName || 'Customer'}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">�</span>
-              Order Services
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">�</span>
-              Book Appointment
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">�</span>
-              View Service History
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">�</span>
-              Messages
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground mt-3 text-center">
-            All actions will be performed on behalf of {customer?.firstName || 'the customer'}
-          </p>
-        </div>
-
         {/* Recent Updates */}
         <div className="bg-card p-6 rounded-lg border border-border">
           <h2 className="text-xl font-semibold mb-4">Recent Updates</h2>

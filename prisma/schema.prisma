@@ -77,6 +77,15 @@ model User {
   customerBookings    Booking[]   @relation("CustomerBookings")
   providerBookings    Booking[]   @relation("ProviderBookings")
   
+  // Service Request relationships
+  serviceRequests     ServiceRequest[] @relation("UserServiceRequests")
+  
+  // Review relationships
+  reviewsGiven        Review[]    @relation("CustomerReviews")
+  reviewsReceived     Review[]    @relation("ProviderReviews")
+  averageRating       Float?
+  totalReviews        Int         @default(0)
+  
   // SubRole permissions
   permissions         String[]    @default([])
   
@@ -153,6 +162,7 @@ model Category {
   isActive      Boolean       @default(true)
   subcategories Subcategory[]
   bookings      Booking[]     // Relation to bookings
+  serviceRequests ServiceRequest[] @relation("CategoryServiceRequests")
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -168,6 +178,7 @@ model Subcategory {
   isActive    Boolean  @default(true)
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  serviceRequests ServiceRequest[] @relation("SubcategoryServiceRequests")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -193,6 +204,7 @@ model Booking {
   location          String?
   notes             String?       @db.Text
   cancellationReason String?     @db.Text
+  reviews           Review[]      // Relation to reviews
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 
@@ -206,4 +218,59 @@ enum BookingStatus {
   COMPLETED
   CANCELLED
   NO_SHOW
+}
+
+model ServiceRequest {
+  id            String              @id @default(cuid())
+  userId        String
+  user          User                @relation("UserServiceRequests", fields: [userId], references: [id], onDelete: Cascade)
+  categoryId    String
+  category      Category            @relation("CategoryServiceRequests", fields: [categoryId], references: [id])
+  subcategoryId String?
+  subcategory   Subcategory?        @relation("SubcategoryServiceRequests", fields: [subcategoryId], references: [id])
+  title         String
+  description   String              @db.Text
+  location      String              // Google Places formatted address
+  locationLat   Float?              // Latitude for mapping
+  locationLng   Float?              // Longitude for mapping
+  budget        Float?
+  serviceDate   DateTime
+  status        ServiceRequestStatus @default(PENDING)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@map("service_requests")
+}
+
+enum ServiceRequestStatus {
+  PENDING
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  rating      Int      // 1-5 stars
+  comment     String?  @db.Text
+  
+  // Customer who gave the review
+  customerId  String
+  customer    User     @relation("CustomerReviews", fields: [customerId], references: [id], onDelete: Cascade)
+  
+  // Provider who received the review
+  providerId  String
+  provider    User     @relation("ProviderReviews", fields: [providerId], references: [id], onDelete: Cascade)
+  
+  // Optional booking reference
+  bookingId   String?
+  booking     Booking? @relation(fields: [bookingId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("reviews")
+  @@index([providerId])
+  @@index([customerId])
 }

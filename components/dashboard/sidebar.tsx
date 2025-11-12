@@ -21,6 +21,7 @@ import {
   Settings,
   FolderTree,
   Mail,
+  ListTodo,
 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 
@@ -54,9 +55,21 @@ const navItems: NavItem[] = [
     roles: ['CUSTOMER']
   },
   {
+    name: 'Find Providers',
+    href: '/dashboard/customer/providers',
+    icon: Building2,
+    roles: ['CUSTOMER']
+  },
+  {
     name: 'My Bookings',
     href: '/dashboard/customer/bookings',
     icon: Calendar,
+    roles: ['CUSTOMER']
+  },
+  {
+    name: 'Service Requests',
+    href: '/dashboard/customer/service-requests',
+    icon: ListTodo,
     roles: ['CUSTOMER']
   },
   {
@@ -276,7 +289,7 @@ export default function DashboardSidebar({ userRole, isOpen, onClose }: Dashboar
           {/* Sidebar Header */}
           <div className="p-6">
             <div className="flex items-center justify-between">
-              <div className="flex items-center justify-center flex-1">
+              <Link href="/" className="flex items-center justify-center flex-1">
                 <Image 
                   src="/images/MyNestShield.png" 
                   alt="MyNestShield Logo" 
@@ -284,7 +297,7 @@ export default function DashboardSidebar({ userRole, isOpen, onClose }: Dashboar
                   height={72}
                   className="object-contain"
                 />
-              </div>
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"

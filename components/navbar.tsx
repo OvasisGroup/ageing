@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 
 type UserRole = 'CUSTOMER' | 'PROVIDER' | 'ADMIN' | 'FAMILY_MEMBER' | 'CAREGIVER';
 
@@ -17,7 +16,6 @@ interface User {
 }
 
 export default function Navbar() {
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
   const [fontSize, setFontSize] = useState(100);
@@ -133,6 +131,14 @@ export default function Navbar() {
             >
               Get More Info
             </Link>
+            {user && user.role === 'CUSTOMER' && (
+              <Link
+                href="/dashboard/customer/service-requests"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                My Service Requests
+              </Link>
+            )}
           </nav>
         </div>
 
@@ -354,6 +360,23 @@ export default function Navbar() {
                   Get Involved
                 </Link>
               </motion.div>
+              
+              {user && user.role === 'CUSTOMER' && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3, delay: 0.4 }}
+                >
+                  <Link
+                    href="/dashboard/customer/service-requests"
+                    onClick={() => setIsOpen(false)}
+                    className="block py-2 text-lg font-medium text-foreground/80 hover:text-foreground transition-colors"
+                  >
+                    My Service Requests
+                  </Link>
+                </motion.div>
+              )}
               
               <motion.div
                 initial={{ opacity: 0, x: -20 }}

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import DashboardLayout from '@/components/dashboard/layout';
 
 export default function AdminDashboard() {
@@ -59,45 +57,6 @@ export default function AdminDashboard() {
               )}
             </p>
             <p className="text-sm text-muted-foreground">Customer inquiries</p>
-          </div>
-        </div>
-
-        {/* Admin Actions */}
-        <div className="bg-card p-6 rounded-lg border border-border">
-          <h2 className="text-xl font-semibold mb-4">Admin Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <Link href="/dashboard/admin/users">
-              <Button className="h-20 flex flex-col items-center justify-center w-full">
-                <span className="text-lg mb-1">👥</span>
-                Manage Users
-              </Button>
-            </Link>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">🏢</span>
-              Manage Providers
-            </Button>
-            <Link href="/dashboard/admin/inquiries">
-              <Button 
-                variant="outline" 
-                className="h-20 flex flex-col items-center justify-center w-full"
-              >
-                <span className="text-lg mb-1">📧</span>
-                Manage Inquiries
-              </Button>
-            </Link>
-            <Link href="/dashboard/admin/categories">
-              <Button 
-                variant="outline" 
-                className="h-20 flex flex-col items-center justify-center w-full"
-              >
-                <span className="text-lg mb-1">�</span>
-                Manage Categories
-              </Button>
-            </Link>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">⚙️</span>
-              System Settings
-            </Button>
           </div>
         </div>
 

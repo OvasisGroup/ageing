@@ -84,7 +84,7 @@ export default function CategoryDetailPage() {
         <div className="text-center py-12">
           <div className="text-6xl mb-4">❌</div>
           <h3 className="text-xl font-semibold mb-2">Category not found</h3>
-          <p className="text-muted-foreground mb-6">The category you're looking for doesn't exist.</p>
+          <p className="text-muted-foreground mb-6">The category you&apos;re looking for doesn&apos;t exist.</p>
           <Button asChild>
             <Link href="/dashboard/customer/services">Back to Services</Link>
           </Button>

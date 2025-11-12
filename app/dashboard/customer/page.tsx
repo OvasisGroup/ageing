@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import DashboardLayout from '@/components/dashboard/layout';
 
 export default function CustomerDashboard() {
@@ -25,29 +24,6 @@ export default function CustomerDashboard() {
             <h3 className="text-lg font-semibold mb-2">Total Spent</h3>
             <p className="text-3xl font-bold text-green-600">$0</p>
             <p className="text-sm text-muted-foreground">This month</p>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-card p-6 rounded-lg border border-border">
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">🔍</span>
-              Find Services
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">📅</span>
-              Book Appointment
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">💬</span>
-              Messages
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <span className="text-lg mb-1">⚙️</span>
-              Settings
-            </Button>
           </div>
         </div>
 

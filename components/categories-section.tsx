@@ -81,7 +81,7 @@ export default function CategoriesSection() {
                 }}
               >
                 <Link
-                  href={`/categories/${category.slug}`}
+                  href="/dashboard/customer/service-requests/new"
                   className="group block"
                 >
                   <motion.div
