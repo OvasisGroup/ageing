@@ -5,15 +5,62 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+
+type UserRole = 'CUSTOMER' | 'PROVIDER' | 'ADMIN' | 'FAMILY_MEMBER' | 'CAREGIVER';
+
+interface User {
+  id: string;
+  role: UserRole;
+  firstName?: string;
+  lastName?: string;
+}
 
 export default function Navbar() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
   const [fontSize, setFontSize] = useState(100);
+  const [user, setUser] = useState<User | null>(null);
   const accessibilityRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleAccessibility = () => setIsAccessibilityOpen(!isAccessibilityOpen);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkUser = () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('user');
+        }
+      }
+    };
+    
+    checkUser();
+  }, []);
+
+  // Get dashboard path based on user role
+  const getDashboardPath = (role: UserRole) => {
+    switch (role) {
+      case 'CUSTOMER':
+        return '/dashboard/customer';
+      case 'PROVIDER':
+        return '/dashboard/provider';
+      case 'ADMIN':
+        return '/dashboard/admin';
+      case 'FAMILY_MEMBER':
+        return '/dashboard/family-member';
+      case 'CAREGIVER':
+        return '/dashboard/caregiver';
+      default:
+        return '/dashboard/customer';
+    }
+  };
 
   // Apply font size changes
   useEffect(() => {
@@ -182,11 +229,19 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          <Button asChild>
-            <Link href="/login">
-              Get Started
-            </Link>
-          </Button>
+          {user ? (
+            <Button asChild>
+              <Link href={getDashboardPath(user.role)}>
+                Dashboard
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild>
+              <Link href="/login">
+                Get Started
+              </Link>
+            </Button>
+          )}
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden">
@@ -307,11 +362,19 @@ export default function Navbar() {
                 transition={{ duration: 0.3, delay: 0.5 }}
                 className="pt-4 border-t border-border/40 space-y-4"
               >
-                <Button asChild className="w-full">
-                  <Link href="/login" onClick={() => setIsOpen(false)}>
-                    Get Started
-                  </Link>
-                </Button>
+                {user ? (
+                  <Button asChild className="w-full">
+                    <Link href={getDashboardPath(user.role)} onClick={() => setIsOpen(false)}>
+                      Dashboard
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button asChild className="w-full">
+                    <Link href="/login" onClick={() => setIsOpen(false)}>
+                      Get Started
+                    </Link>
+                  </Button>
+                )}
               </motion.div>
             </div>
           </motion.div>
