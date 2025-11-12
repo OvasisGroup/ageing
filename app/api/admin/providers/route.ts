@@ -22,7 +22,6 @@ export async function GET() {
         lastName: true,
         phone: true,
         role: true,
-        dateOfBirth: true,
         businessName: true,
         businessAddress: true,
         licenseNumber: true,
@@ -37,7 +36,7 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(providers);
+    return NextResponse.json({ providers });
   } catch (error) {
     console.error('Error fetching providers:', error);
     return NextResponse.json(

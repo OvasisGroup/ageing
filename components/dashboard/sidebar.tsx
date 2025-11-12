@@ -129,6 +129,12 @@ const navItems: NavItem[] = [
   },
   // Provider specific items
   {
+    name: 'My Bookings',
+    href: '/dashboard/provider/bookings',
+    icon: Calendar,
+    roles: ['PROVIDER']
+  },
+  {
     name: 'My Clients',
     href: '/dashboard/provider/clients',
     icon: Users,

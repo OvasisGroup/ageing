@@ -38,7 +38,7 @@ model User {
   businessName        String?
   businessAddress     String?
   licenseNumber       String?
-  serviceType         ServiceType?
+  serviceType         String?     // Changed from enum to String to allow dynamic categories
   yearsOfExperience   Int?
   description         String?     @db.Text
   
@@ -63,10 +63,19 @@ model User {
   // Certifications
   certifications      Json[]      @default([])
   
+  // Google Calendar Integration
+  googleCalendarRefreshToken String?
+  googleCalendarAccessToken  String?
+  googleCalendarTokenExpiry  DateTime?
+  
   // SubRole relationships
   parentUserId        String?
   parentUser          User?       @relation("UserSubRoles", fields: [parentUserId], references: [id], onDelete: Cascade)
   subRoleUsers        User[]      @relation("UserSubRoles")
+  
+  // Booking relationships
+  customerBookings    Booking[]   @relation("CustomerBookings")
+  providerBookings    Booking[]   @relation("ProviderBookings")
   
   // SubRole permissions
   permissions         String[]    @default([])
@@ -86,15 +95,6 @@ enum Role {
 enum SubRole {
   FAMILY_MEMBER
   CAREGIVER
-}
-
-enum ServiceType {
-  HOME_CARE
-  MEDICAL_CARE
-  COMPANIONSHIP
-  HOUSEKEEPING
-  TRANSPORTATION
-  OTHER
 }
 
 enum VettedStatus {
@@ -152,6 +152,7 @@ model Category {
   slug          String        @unique
   isActive      Boolean       @default(true)
   subcategories Subcategory[]
+  bookings      Booking[]     // Relation to bookings
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -171,4 +172,38 @@ model Subcategory {
   updatedAt   DateTime @updatedAt
 
   @@map("subcategories")
+}
+
+model Booking {
+  id                String        @id @default(cuid())
+  customerId        String
+  customer          User          @relation("CustomerBookings", fields: [customerId], references: [id], onDelete: Cascade)
+  providerId        String
+  provider          User          @relation("ProviderBookings", fields: [providerId], references: [id], onDelete: Cascade)
+  categoryId        String        // Link to Category instead of enum
+  category          Category      @relation(fields: [categoryId], references: [id])
+  title             String
+  description       String?       @db.Text
+  startTime         DateTime
+  endTime           DateTime
+  duration          Int           // Duration in minutes
+  status            BookingStatus @default(PENDING)
+  budget            Float?        // Budget amount for the service
+  googleEventId     String?       // Google Calendar Event ID
+  location          String?
+  notes             String?       @db.Text
+  cancellationReason String?     @db.Text
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
 }
