@@ -46,11 +46,15 @@ export default function AdminProvidersPage() {
       const response = await fetch('/api/admin/providers');
       if (response.ok) {
         const data = await response.json();
-        setProviders(data);
+        setProviders(Array.isArray(data) ? data : []);
+      } else {
+        toast.error('Failed to load providers');
+        setProviders([]);
       }
     } catch (error) {
       console.error('Error fetching providers:', error);
       toast.error('Failed to load providers');
+      setProviders([]);
     } finally {
       setLoading(false);
     }
@@ -97,10 +101,10 @@ export default function AdminProvidersPage() {
     return serviceType.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
   };
 
-  const filteredProviders = providers.filter(provider => {
+  const filteredProviders = Array.isArray(providers) ? providers.filter(provider => {
     if (filter === 'all') return true;
     return provider.serviceType === filter;
-  });
+  }) : [];
 
   if (loading) {
     return (
@@ -140,14 +144,14 @@ export default function AdminProvidersPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-card p-6 rounded-lg border border-border">
             <h3 className="text-sm font-medium text-muted-foreground">Total Providers</h3>
-            <p className="text-3xl font-bold text-primary mt-2">{providers.length}</p>
+            <p className="text-3xl font-bold text-primary mt-2">{Array.isArray(providers) ? providers.length : 0}</p>
             <p className="text-sm text-muted-foreground mt-1">Registered providers</p>
           </div>
           
           <div className="bg-card p-6 rounded-lg border border-border">
             <h3 className="text-sm font-medium text-muted-foreground">Home Care</h3>
             <p className="text-3xl font-bold text-blue-600 mt-2">
-              {providers.filter(p => p.serviceType === 'HOME_CARE').length}
+              {Array.isArray(providers) ? providers.filter(p => p.serviceType === 'HOME_CARE').length : 0}
             </p>
             <p className="text-sm text-muted-foreground mt-1">Providers</p>
           </div>
@@ -155,7 +159,7 @@ export default function AdminProvidersPage() {
           <div className="bg-card p-6 rounded-lg border border-border">
             <h3 className="text-sm font-medium text-muted-foreground">Medical Care</h3>
             <p className="text-3xl font-bold text-red-600 mt-2">
-              {providers.filter(p => p.serviceType === 'MEDICAL_CARE').length}
+              {Array.isArray(providers) ? providers.filter(p => p.serviceType === 'MEDICAL_CARE').length : 0}
             </p>
             <p className="text-sm text-muted-foreground mt-1">Providers</p>
           </div>
@@ -163,7 +167,7 @@ export default function AdminProvidersPage() {
           <div className="bg-card p-6 rounded-lg border border-border">
             <h3 className="text-sm font-medium text-muted-foreground">Average Experience</h3>
             <p className="text-3xl font-bold text-green-600 mt-2">
-              {providers.length > 0 
+              {Array.isArray(providers) && providers.length > 0 
                 ? Math.round(providers.reduce((sum, p) => sum + (p.yearsOfExperience || 0), 0) / providers.length)
                 : 0
               }
@@ -179,49 +183,49 @@ export default function AdminProvidersPage() {
             size="sm"
             onClick={() => setFilter('all')}
           >
-            All ({providers.length})
+            All ({Array.isArray(providers) ? providers.length : 0})
           </Button>
           <Button
             variant={filter === 'HOME_CARE' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('HOME_CARE')}
           >
-            Home Care ({providers.filter(p => p.serviceType === 'HOME_CARE').length})
+            Home Care ({Array.isArray(providers) ? providers.filter(p => p.serviceType === 'HOME_CARE').length : 0})
           </Button>
           <Button
             variant={filter === 'MEDICAL_CARE' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('MEDICAL_CARE')}
           >
-            Medical Care ({providers.filter(p => p.serviceType === 'MEDICAL_CARE').length})
+            Medical Care ({Array.isArray(providers) ? providers.filter(p => p.serviceType === 'MEDICAL_CARE').length : 0})
           </Button>
           <Button
             variant={filter === 'COMPANIONSHIP' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('COMPANIONSHIP')}
           >
-            Companionship ({providers.filter(p => p.serviceType === 'COMPANIONSHIP').length})
+            Companionship ({Array.isArray(providers) ? providers.filter(p => p.serviceType === 'COMPANIONSHIP').length : 0})
           </Button>
           <Button
             variant={filter === 'HOUSEKEEPING' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('HOUSEKEEPING')}
           >
-            Housekeeping ({providers.filter(p => p.serviceType === 'HOUSEKEEPING').length})
+            Housekeeping ({Array.isArray(providers) ? providers.filter(p => p.serviceType === 'HOUSEKEEPING').length : 0})
           </Button>
           <Button
             variant={filter === 'TRANSPORTATION' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('TRANSPORTATION')}
           >
-            Transportation ({providers.filter(p => p.serviceType === 'TRANSPORTATION').length})
+            Transportation ({Array.isArray(providers) ? providers.filter(p => p.serviceType === 'TRANSPORTATION').length : 0})
           </Button>
           <Button
             variant={filter === 'OTHER' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('OTHER')}
           >
-            Other ({providers.filter(p => p.serviceType === 'OTHER').length})
+            Other ({Array.isArray(providers) ? providers.filter(p => p.serviceType === 'OTHER').length : 0})
           </Button>
         </div>
 
@@ -438,7 +442,7 @@ export default function AdminProvidersPage() {
         </div>
 
         {/* Empty State */}
-        {providers.length === 0 && (
+        {(!Array.isArray(providers) || providers.length === 0) && !loading && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🏥</div>
             <h3 className="text-lg font-medium mb-2">No providers yet</h3>

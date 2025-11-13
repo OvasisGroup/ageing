@@ -192,19 +192,28 @@ export async function PUT(request: NextRequest) {
     if (businessAddress !== null) updateData.businessAddress = businessAddress;
     if (licenseNumber !== null) updateData.licenseNumber = licenseNumber;
     if (serviceType !== null) updateData.serviceType = serviceType;
-    if (yearsOfExperience !== null) updateData.yearsOfExperience = parseInt(yearsOfExperience);
+    if (yearsOfExperience !== null && yearsOfExperience !== '') {
+      const parsed = parseInt(yearsOfExperience);
+      if (!isNaN(parsed)) {
+        updateData.yearsOfExperience = parsed;
+      }
+    }
     if (description !== null) updateData.description = description;
 
     if (profilePhotoPath) updateData.profilePhoto = profilePhotoPath;
 
     if (insuranceProvider !== null) updateData.insuranceProvider = insuranceProvider;
     if (insurancePolicyNumber !== null) updateData.insurancePolicyNumber = insurancePolicyNumber;
-    if (insuranceExpiryDate !== null) updateData.insuranceExpiryDate = new Date(insuranceExpiryDate);
+    if (insuranceExpiryDate !== null && insuranceExpiryDate !== '') {
+      updateData.insuranceExpiryDate = new Date(insuranceExpiryDate);
+    }
     if (insuranceDocuments) updateData.insuranceDocuments = insuranceDocuments;
 
     if (workersCompProvider !== null) updateData.workersCompProvider = workersCompProvider;
     if (workersCompPolicyNumber !== null) updateData.workersCompPolicyNumber = workersCompPolicyNumber;
-    if (workersCompExpiryDate !== null) updateData.workersCompExpiryDate = new Date(workersCompExpiryDate);
+    if (workersCompExpiryDate !== null && workersCompExpiryDate !== '') {
+      updateData.workersCompExpiryDate = new Date(workersCompExpiryDate);
+    }
     if (workersCompDocuments) updateData.workersCompDocuments = workersCompDocuments;
 
     if (certifications !== null) updateData.certifications = certifications;
