@@ -83,30 +83,33 @@ export default function RootLayout({
             toastOptions={{
               duration: 4000,
               style: {
-                background: 'hsl(var(--background))',
+                background: '#ffffff',
                 color: 'hsl(var(--foreground))',
                 border: '1px solid hsl(var(--border))',
+                zIndex: 1000,
               },
               success: {
                 style: {
-                  background: 'hsl(var(--background))',
+                  background: '#ffffff',
                   color: 'hsl(var(--foreground))',
                   border: '1px solid hsl(142 76% 36%)',
+                  zIndex: 1000,
                 },
                 iconTheme: {
                   primary: 'hsl(142 76% 36%)',
-                  secondary: 'hsl(var(--background))',
+                  secondary: '#ffffff',
                 },
               },
               error: {
                 style: {
-                  background: 'hsl(var(--background))',
+                  background: '#ffffff',
                   color: 'hsl(var(--foreground))',
                   border: '1px solid hsl(var(--destructive))',
+                  zIndex: 1000,
                 },
                 iconTheme: {
                   primary: 'hsl(var(--destructive))',
-                  secondary: 'hsl(var(--background))',
+                  secondary: '#ffffff',
                 },
               },
             }}
