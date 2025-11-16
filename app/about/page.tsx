@@ -19,7 +19,7 @@ export default function AboutPage() {
           >
             <div className="max-w-lg text-center lg:text-left mx-auto">
               <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-                About MyNestShield
+                About Senior Home Services Network
               </h1>
               <p className="text-xl text-slate-200 leading-relaxed">
                 Empowering older adults and persons with disabilities to live independently,
@@ -136,9 +136,9 @@ export default function AboutPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-slate-900 mb-3">The Birth of MyNestShield</h3>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-3">The Birth of Senior Home Services Network</h3>
                   <p className="text-slate-700 leading-relaxed">
-                    It should be a simple click away. That is how MyNestShield was born—a platform that connects older adults, persons with disabilities, and their family members and caregivers with vetted and background checked professionals who understand the unique needs of aging in place and accessible living.
+                    It should be a simple click away. That is how Senior Home Services Network was born—a platform that connects older adults, persons with disabilities, and their family members and caregivers with vetted and background checked professionals who understand the unique needs of aging in place and accessible living.
                   </p>
                 </div>
               </div>

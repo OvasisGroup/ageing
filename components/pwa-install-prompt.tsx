@@ -137,7 +137,7 @@ export default function PWAInstallPrompt() {
                 <span className="text-2xl">📱</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold">Install MyNestShield</h3>
+                <h3 className="text-lg font-bold">Install Senior Home Services Network</h3>
                 <p className="text-sm text-white/90">Quick access from your home screen</p>
               </div>
             </div>
@@ -182,7 +182,7 @@ export default function PWAInstallPrompt() {
               // Android/Desktop Instructions
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
-                  Get quick access to MyNestShield with these features:
+                  Get quick access to Senior Home Services Network with these features:
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-center space-x-2 text-sm">

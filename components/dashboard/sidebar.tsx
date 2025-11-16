@@ -292,7 +292,7 @@ export default function DashboardSidebar({ userRole, isOpen, onClose }: Dashboar
               <Link href="/" className="flex items-center justify-center flex-1">
                 <Image 
                   src="/images/MyNestShield.png" 
-                  alt="MyNestShield Logo" 
+                  alt="Senior Home Services Network Logo" 
                   width={187}
                   height={72}
                   className="object-contain"

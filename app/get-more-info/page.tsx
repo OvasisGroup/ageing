@@ -245,7 +245,7 @@ export default function GetMoreInfoPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <h3 className="text-2xl font-bold text-slate-900 mb-6">Why Choose MyNestShield?</h3>
+            <h3 className="text-2xl font-bold text-slate-900 mb-6">Why Choose Senior Home Services Network?</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center mt-1">
@@ -289,7 +289,7 @@ export default function GetMoreInfoPage() {
             <div className="mt-6">
               <Image
                 src="/images/whyus.jpg"
-                alt="Why choose MyNestShield - Supporting seniors and people with disabilities"
+                alt="Why choose Senior Home Services Network - Supporting seniors and people with disabilities"
                 width={400}
                 height={250}
                 className="w-full h-auto rounded-lg object-cover"

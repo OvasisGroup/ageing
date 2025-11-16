@@ -66,7 +66,7 @@ export async function sendVerificationEmail(email: string, otp: string, username
                   <!-- Logo Header -->
                   <tr class="border-b-1 border-gray-300 px-2">
                     <td style="background: #ffffff; padding: 30px; text-align: center;">
-                      <img src="https://www.mynestshield.com/_next/image?url=%2Fimages%2FMyNestShield.png&w=1920&q=75" alt="MyNestShield" class="logo" style="max-width: 200px; height: auto; display: inline-block; margin-bottom: 15px;" />
+                      <img src="https://www.mynestshield.com/_next/image?url=%2Fimages%2FMyNestShield.png&w=1920&q=75" alt="Senior Home Services Network" class="logo" style="max-width: 200px; height: auto; display: inline-block; margin-bottom: 15px;" />
                       <h1 style="color: #69b043; margin: 0; font-size: 28px; font-weight: 600;">Verify Your Email</h1>
                     </td>
                   </tr>
@@ -76,7 +76,7 @@ export async function sendVerificationEmail(email: string, otp: string, username
                     <td class="content-padding" style="padding: 40px 30px;">
                       <p style="font-size: 16px; margin: 0 0 20px 0; color: #000; text-align: center;">Hello <strong style="color: #69b043;">${username}</strong>,</p>
                       
-                      <p style="font-size: 16px; margin: 0 0 30px 0; color: #000; text-align: center;">Thank you for registering with <strong style="color: #69b043;">MyNestShield</strong>. To complete your registration, please verify your email address using the code below:</p>
+                      <p style="font-size: 16px; margin: 0 0 30px 0; color: #000; text-align: center;">Thank you for registering with <strong style="color: #69b043;">Senior Home Services Network</strong>. To complete your registration, please verify your email address using the code below:</p>
                       
                       <table width="100%" cellpadding="0" cellspacing="0">
                         <tr>
@@ -100,7 +100,7 @@ export async function sendVerificationEmail(email: string, otp: string, username
                       </table>
                       
                       <p style="font-size: 14px; color: #6B7280; margin: 20px 0 0 0;">
-                        If you didn't create an account with MyNestShield, please disregard this email. Your email address will not be used without verification.
+                        If you didn't create an account with Senior Home Services Network, please disregard this email. Your email address will not be used without verification.
                       </p>
                     </td>
                   </tr>
@@ -109,10 +109,10 @@ export async function sendVerificationEmail(email: string, otp: string, username
                   <tr>
                     <td style="background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%); padding: 30px 20px; text-align: center; border-top: 1px solid #E5E7EB;">
                       <p style="font-size: 12px; color: #6B7280; margin: 0 0 10px 0;">
-                        This is an automated message from <strong style="color: #69b043;">MyNestShield</strong>. Please do not reply to this email.
+                        This is an automated message from <strong style="color: #69b043;">Senior Home Services Network</strong>. Please do not reply to this email.
                       </p>
                       <p style="font-size: 12px; color: #9CA3AF; margin: 0;">
-                        © ${new Date().getFullYear()} MyNestShield. All rights reserved.
+                        © ${new Date().getFullYear()} Senior Home Services Network. All rights reserved.
                       </p>
                     </td>
                   </tr>
@@ -125,17 +125,17 @@ export async function sendVerificationEmail(email: string, otp: string, username
     `,
     text: `Hello ${username},
 
-Thank you for registering with MyNestShield!
+Thank you for registering with Senior Home Services Network!
 
 Your verification code is: ${otp}
 
 This code will expire in 10 minutes. Please enter it on the verification page to complete your registration.
 
-If you didn't create an account with MyNestShield, please ignore this email and close.
+If you didn't create an account with Senior Home Services Network, please ignore this email and close.
 
 ---
-This is an automated message from MyNestShield. Please do not reply to this email.
-© ${new Date().getFullYear()} MyNestShield. All rights reserved.`,
+This is an automated message from Senior Home Services Network. Please do not reply to this email.
+© ${new Date().getFullYear()} Senior Home Services Network. All rights reserved.`,
   };
 
   try {

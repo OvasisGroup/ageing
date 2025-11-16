@@ -12,7 +12,7 @@ export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(false);
 
   // General Settings
-  const [siteName, setSiteName] = useState('MyNestShield');
+  const [siteName, setSiteName] = useState('Senior Home Services Network');
   const [siteDescription, setSiteDescription] = useState('Aging Care Platform');
   const [contactEmail, setContactEmail] = useState('admin@mynestshield.com');
   const [supportPhone, setSupportPhone] = useState('+1 (555) 123-4567');

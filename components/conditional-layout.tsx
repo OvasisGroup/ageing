@@ -15,9 +15,8 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
   // Check if current path is an auth page or dashboard page
   const isAuthPage = pathname === '/login' || pathname.startsWith('/register');
   const isDashboardPage = pathname.startsWith('/dashboard');
-  const isGetMoreInfoPage = pathname === '/get-more-info';
   
-  if (isAuthPage || isDashboardPage || isGetMoreInfoPage) {
+  if (isAuthPage || isDashboardPage) {
     // Return children without header/footer for auth pages and dashboard pages
     return <>{children}</>;
   }

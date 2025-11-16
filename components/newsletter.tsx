@@ -163,7 +163,7 @@ export default function Newsletter() {
               <div className="flex justify-center mb-6">
                 <Image
                   src="/images/mynestshield-icon.png"
-                  alt="MyNestShield Logo"
+                  alt="Senior Home Services Network Logo"
                   width={80}
                   height={80}
                   className="rounded-lg"

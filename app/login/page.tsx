@@ -115,7 +115,7 @@ export default function LoginPage() {
             <Link href="/">
               <Image
                 src="/images/MyNestShield.png"
-                alt="MyNestShield Logo"
+                alt="Senior Home Services Network Logo"
                 width={200}
                 height={60}
                 className="h-14 w-auto"

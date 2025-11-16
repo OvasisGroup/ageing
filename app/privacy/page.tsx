@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
           </div>
           
           <p className="text-xl text-muted-foreground">
-            Your privacy is important to us. Learn how MyNestShield protects and uses your information.
+            Your privacy is important to us. Learn how Senior Home Services Network protects and uses your information.
           </p>
           
           <div className="text-sm text-muted-foreground mt-4">
@@ -58,7 +58,7 @@ export default function PrivacyPolicyPage() {
             </div>
             <div className="bg-card border border-border rounded-lg p-6">
               <p className="text-muted-foreground leading-relaxed">
-                MyNestShield (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting the privacy and security of older adults, persons with disabilities, and their families who use our platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our aging-in-place services platform.
+                Senior Home Services Network (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting the privacy and security of older adults, persons with disabilities, and their families who use our platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our aging-in-place services platform.
               </p>
               <p className="text-muted-foreground leading-relaxed mt-4">
                 We understand that trust is essential when it comes to home services and personal care. This policy reflects our commitment to transparency and your right to privacy.
@@ -259,7 +259,7 @@ export default function PrivacyPolicyPage() {
             <div className="bg-slate-50 border border-slate-200 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-foreground mb-3">Policy Updates</h3>
               <p className="text-muted-foreground text-sm">
-                We may update this Privacy Policy from time to time. We will notify you of any material changes by email or through our platform. Your continued use of MyNestShield after changes become effective constitutes acceptance of the updated policy.
+                We may update this Privacy Policy from time to time. We will notify you of any material changes by email or through our platform. Your continued use of Senior Home Services Network after changes become effective constitutes acceptance of the updated policy.
               </p>
             </div>
           </section>

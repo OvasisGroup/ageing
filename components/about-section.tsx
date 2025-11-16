@@ -24,7 +24,7 @@ export default function AboutSection() {
             </h2>
             <h3 className='text-secondary'>Building a Community of Care</h3>
             <p className="text-lg text-slate-700 leading-relaxed">
-              At MyNestShield, we believe that every older adult and persons with disabilities deserves to live comfortably, independently, safely and with dignity in the home they love for the long haul. MyNestShield is more than just a service marketplace, we are dedicated to becoming the most trusted name in older adult home support across North Carolina and behold.
+              At Senior Home Services Network, we believe that every older adult and persons with disabilities deserves to live comfortably, independently, safely and with dignity in the home they love for the long haul. Senior Home Services Network is more than just a service marketplace, we are dedicated to becoming the most trusted name in older adult home support across North Carolina and behold.
             </p>
             
             {/* Buttons */}
@@ -62,7 +62,7 @@ export default function AboutSection() {
           >
             <Image
               src="/images/signin_image.jpg"
-              alt="About MyNestShield - Supporting older adults and persons with disabilities"
+              alt="About Senior Home Services Network - Supporting older adults and persons with disabilities"
               fill
               className="object-cover rounded-3xl"
               priority={false}

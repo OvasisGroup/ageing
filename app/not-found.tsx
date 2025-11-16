@@ -11,7 +11,7 @@ export default function NotFound() {
         <Link href="/" className="inline-block mb-8 animate-fade-in">
           <Image
             src="/images/MyNestShield.png"
-            alt="MyNestShield Logo"
+            alt="Senior Home Services Network Logo"
             width={150}
             height={150}
             className="mx-auto"

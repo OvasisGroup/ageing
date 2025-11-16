@@ -8,30 +8,30 @@ import { Toaster } from "react-hot-toast";
 import PWAInstallPrompt from "@/components/pwa-install-prompt";
 
 export const metadata: Metadata = {
-  title: "MyNestShield - Aging Care Platform",
+  title: "Senior Home Services Network - Aging Care Platform",
   description: "Professional aging care services platform connecting caregivers with those in need of compassionate, quality care.",
   keywords: ["aging care", "elderly care", "caregivers", "home care", "medical care", "companionship"],
-  authors: [{ name: "MyNestShield" }],
-  creator: "MyNestShield",
-  publisher: "MyNestShield",
+  authors: [{ name: "Senior Home Services Network" }],
+  creator: "Senior Home Services Network",
+  publisher: "Senior Home Services Network",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "MyNestShield",
+    title: "Senior Home Services Network",
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
     type: "website",
-    siteName: "MyNestShield",
-    title: "MyNestShield - Aging Care Platform",
+    siteName: "Senior Home Services Network",
+    title: "Senior Home Services Network - Aging Care Platform",
     description: "Professional aging care services platform connecting caregivers with those in need of compassionate, quality care.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyNestShield - Aging Care Platform",
+    title: "Senior Home Services Network - Aging Care Platform",
     description: "Professional aging care services platform connecting caregivers with those in need of compassionate, quality care.",
   },
 };
@@ -54,10 +54,10 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="application-name" content="MyNestShield" />
+        <meta name="application-name" content="Senior Home Services Network" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="MyNestShield" />
+        <meta name="apple-mobile-web-app-title" content="Senior Home Services Network" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
