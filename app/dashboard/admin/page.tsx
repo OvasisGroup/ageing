@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/dashboard/layout';
+import PredictiveAnalytics from '@/components/admin/predictive-analytics';
+import BusinessIntelligence from '@/components/admin/business-intelligence';
+import AIChatbot from '@/components/ai-chatbot';
 
 export default function AdminDashboard() {
   const [totalInquiries, setTotalInquiries] = useState(0);
@@ -97,7 +100,16 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
+
+        {/* AI-Powered Analytics */}
+        <PredictiveAnalytics />
+
+        {/* Business Intelligence */}
+        <BusinessIntelligence />
       </div>
+
+      {/* AI Chatbot */}
+      <AIChatbot />
     </DashboardLayout>
   );
 }

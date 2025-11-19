@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/dashboard/layout';
+import ResponseAssistant from '@/components/provider/response-assistant';
+import PricingRecommendations from '@/components/provider/pricing-recommendations';
+import AIChatbot from '@/components/ai-chatbot';
 import toast from 'react-hot-toast';
 
 interface ServiceRequest {
@@ -290,7 +293,16 @@ export default function ProviderDashboard() {
             </div>
           )}
         </div>
+
+        {/* AI Tools Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ResponseAssistant />
+          <PricingRecommendations />
+        </div>
       </div>
+
+      {/* AI Chatbot */}
+      <AIChatbot />
     </DashboardLayout>
   );
 }

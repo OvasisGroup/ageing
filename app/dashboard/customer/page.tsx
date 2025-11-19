@@ -1,6 +1,9 @@
 'use client';
 
 import DashboardLayout from '@/components/dashboard/layout';
+import ServiceRecommender from '@/components/customer/service-recommender';
+import CarePlanningAssistant from '@/components/customer/care-planning-assistant';
+import AIChatbot from '@/components/ai-chatbot';
 
 export default function CustomerDashboard() {
   return (
@@ -35,7 +38,16 @@ export default function CustomerDashboard() {
             <p className="text-sm mt-2">Start by finding and booking services!</p>
           </div>
         </div>
+
+        {/* AI-Powered Tools */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ServiceRecommender />
+          <CarePlanningAssistant />
+        </div>
       </div>
+
+      {/* AI Chatbot */}
+      <AIChatbot />
     </DashboardLayout>
   );
 }

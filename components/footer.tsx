@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { Home, Info, Mail, FileText, Menu } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-secondary border-t border-border/40">
+    <>
+      <footer className="bg-secondary border-t border-border/40 pb-16 md:pb-0">
       <div className="container mx-auto px-4 md:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           
@@ -139,6 +141,52 @@ export default function Footer() {
           </div>
         </div>
       </div>
+      
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border/40 shadow-lg z-50">
+        <nav className="flex items-center justify-around px-2 py-3">
+          <Link 
+            href="/" 
+            className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 active:bg-gray-200"
+          >
+            <Home className="w-6 h-6 text-gray-700" />
+            <span className="text-xs text-gray-700 font-medium">Home</span>
+          </Link>
+          
+          <Link 
+            href="/about" 
+            className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 active:bg-gray-200"
+          >
+            <Info className="w-6 h-6 text-gray-700" />
+            <span className="text-xs text-gray-700 font-medium">About</span>
+          </Link>
+          
+          <Link 
+            href="/services" 
+            className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 active:bg-gray-200"
+          >
+            <Menu className="w-6 h-6 text-gray-700" />
+            <span className="text-xs text-gray-700 font-medium">Services</span>
+          </Link>
+          
+          <Link 
+            href="/get-more-info" 
+            className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 active:bg-gray-200"
+          >
+            <Mail className="w-6 h-6 text-gray-700" />
+            <span className="text-xs text-gray-700 font-medium">Contact</span>
+          </Link>
+          
+          <Link 
+            href="/privacy" 
+            className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 active:bg-gray-200"
+          >
+            <FileText className="w-6 h-6 text-gray-700" />
+            <span className="text-xs text-gray-700 font-medium">Legal</span>
+          </Link>
+        </nav>
+      </div>
     </footer>
+    </>
   );
 }

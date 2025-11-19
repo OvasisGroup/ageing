@@ -88,7 +88,7 @@ export default function DashboardNavbar({ user, onToggleSidebar }: DashboardNavb
           </Button>
           <div className="hidden sm:block">
             <h1 className="text-lg font-semibold text-foreground">
-              Welcome back, {user.firstName}!
+              Welcome back, {user.firstName || user.username}!
             </h1>
           </div>
         </div>
@@ -222,9 +222,9 @@ export default function DashboardNavbar({ user, onToggleSidebar }: DashboardNavb
               className="flex items-center space-x-2 p-2"
             >
               <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
-                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                {user.firstName?.charAt(0) || user.username?.charAt(0) || 'U'}{user.lastName?.charAt(0) || ''}
               </div>
-              <span className="hidden sm:block text-sm">{user.firstName}</span>
+              <span className="hidden sm:block text-sm">{user.firstName || user.username}</span>
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
@@ -235,10 +235,10 @@ export default function DashboardNavbar({ user, onToggleSidebar }: DashboardNavb
                 <div className="p-4 border-b border-border">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-medium">
-                      {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                      {user.firstName?.charAt(0) || user.username?.charAt(0) || 'U'}{user.lastName?.charAt(0) || ''}
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{user.firstName} {user.lastName}</p>
+                      <p className="font-medium text-sm">{user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username}</p>
                       <p className="text-xs text-muted-foreground">{user.email}</p>
                       <span className="inline-block mt-1 px-2 py-1 bg-accent text-accent-foreground text-xs rounded">
                         {user.role}

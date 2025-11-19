@@ -11,6 +11,9 @@ export async function GET(request: NextRequest) {
 
     const where = isActive !== null ? { isActive: isActive === 'true' } : {};
 
+    // Ensure database connection
+    await prisma.$connect();
+
     const categories = await prisma.category.findMany({
       where,
       include: {
@@ -22,10 +25,18 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(categories);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching categories:', error);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      meta: error.meta,
+    });
     return NextResponse.json(
-      { error: 'Failed to fetch categories' },
+      { 
+        error: 'Failed to fetch categories',
+        details: error.message 
+      },
       { status: 500 }
     );
   }
