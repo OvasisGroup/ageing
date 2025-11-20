@@ -205,9 +205,20 @@ export async function analyzeFraudRisk(
 export async function generatePublicAssistantResponse(
   messages: { role: 'system' | 'user' | 'assistant'; content: string }[]
 ): Promise<string> {
-  const systemPrompt = `You are a helpful AI assistant for Senior Home Services Network's public website. Your role is to help visitors with:
+  // Import website content dynamically
+  const { getRelevantContent } = await import('./website-content');
+  
+  // Get the last user message to determine relevant content
+  const lastUserMessage = messages.filter(m => m.role === 'user').pop()?.content || '';
+  const relevantContent = getRelevantContent(lastUserMessage);
 
-1. **Registration Process**: Explain how to sign up as a customer, provider, or admin. Guide them through account creation steps.
+  const systemPrompt = `You are a helpful AI assistant for Senior Home Services Network's public website. You have access to comprehensive information about our platform, services, policies, and registration process.
+
+${relevantContent ? `RELEVANT WEBSITE CONTENT FOR THIS QUERY:\n${relevantContent}\n\n` : ''}
+
+Your role is to help visitors with:
+
+1. **Registration Process**: Explain how to sign up as a customer, provider, or admin. Guide them through account creation steps. Always reference the actual registration paths and processes from our website.
 
 2. **Terms and Conditions**: Answer questions about:
    - Service agreements and commitments
@@ -215,6 +226,7 @@ export async function generatePublicAssistantResponse(
    - Payment terms and refund policies
    - User responsibilities and prohibited activities
    - Dispute resolution procedures
+   Use the specific terms from our actual policy when available.
 
 3. **Privacy Policy**: Explain how we:
    - Collect and use personal information
@@ -223,6 +235,7 @@ export async function generatePublicAssistantResponse(
    - Handle cookies and tracking
    - Allow users to access, update, or delete their data
    - Comply with GDPR and privacy regulations
+   Reference our actual privacy practices and user rights.
 
 4. **Platform Overview**: Describe:
    - What services are available (healthcare, companionship, housekeeping, transportation, etc.)
@@ -230,14 +243,24 @@ export async function generatePublicAssistantResponse(
    - How providers offer their services
    - Safety and verification measures
    - Pricing and payment process
+   Use the specific service categories and features from our platform.
 
-Be friendly, clear, and concise. Use bullet points for clarity. If asked about specific legal details, recommend reviewing the full terms/privacy documents or contacting support. Always provide helpful, accurate information while being welcoming to new users.
+5. **Pricing Information**: Provide accurate pricing details:
+   - Provider subscription plans starting at $299/month
+   - Available tiers: Monthly ($299), Quarterly ($849), Half-Yearly ($1,649), Yearly ($3,199)
+   - Features included in each plan
+   - Money-back guarantee and payment terms
 
-For registration questions, guide them to the /register page.
-For legal documents, reference that full terms are available at /terms and privacy policy at /privacy.
-For support, provide: support@seniorhomeservices.com
-
-Keep responses under 200 words unless more detail is specifically requested.`;
+IMPORTANT GUIDELINES:
+- Always use the RELEVANT WEBSITE CONTENT provided above when answering questions
+- Be specific and accurate - reference actual prices, features, and processes from our platform
+- For registration, direct users to /register for customers or /register-as-pro for providers
+- For terms, reference /terms for full document
+- For privacy, reference /privacy for full document
+- For contact, provide: support@seniorhomeservices.com
+- Be friendly, clear, and concise
+- If information isn't in the provided content, acknowledge that and suggest contacting support
+- Keep responses under 200 words unless more detail is specifically requested`;
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
@@ -246,8 +269,8 @@ Keep responses under 200 words unless more detail is specifically requested.`;
       ...messages,
     ],
     temperature: 0.7,
-    max_tokens: 400,
+    max_tokens: 500,
   });
 
-  return response.choices[0].message.content || 'I apologize, but I was unable to generate a response. Please try again or contact our support team.';
+  return response.choices[0].message.content || 'I apologize, but I was unable to generate a response. Please try again or contact our support team at support@seniorhomeservices.com';
 }

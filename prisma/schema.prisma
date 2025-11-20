@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,91 +8,204 @@ datasource db {
   directUrl = env("DIRECT_DATABASE_URL")
 }
 
-model User {
-  id                  String      @id @default(cuid())
-  username            String      @unique
-  email               String      @unique
-  password            String
-  role                Role        @default(CUSTOMER)
-  subRole             SubRole?
-  
-  // Email verification
-  emailVerified       Boolean     @default(false)
-  verificationToken   String?
-  verificationTokenExpiry DateTime?
-  
-  // Common fields
-  firstName           String?
-  lastName            String?
-  phone               String?
-  address             String?
-  zipCode             String?
-  
-  // Provider-specific fields
-  businessName        String?
-  businessAddress     String?
-  licenseNumber       String?
-  serviceType         String?     // Changed from enum to String to allow dynamic categories
-  yearsOfExperience   Int?
-  description         String?     @db.Text
-  
-  // Profile fields
-  profilePhoto        String?
-  vettedStatus        VettedStatus @default(NOT_VETTED)
-  vettedAt            DateTime?
-  vettedBy            String?
-  
-  // Insurance Information
-  insuranceProvider   String?
-  insurancePolicyNumber String?
-  insuranceExpiryDate DateTime?
-  insuranceDocuments  String[]    @default([])
-  
-  // Workers Compensation Insurance
-  workersCompProvider String?
-  workersCompPolicyNumber String?
-  workersCompExpiryDate DateTime?
-  workersCompDocuments String[]   @default([])
-  
-  // Certifications
-  certifications      Json[]      @default([])
-  
-  // Google Calendar Integration
-  googleCalendarRefreshToken String?
-  googleCalendarAccessToken  String?
-  googleCalendarTokenExpiry  DateTime?
-  
-  // SubRole relationships
-  parentUserId        String?
-  parentUser          User?       @relation("UserSubRoles", fields: [parentUserId], references: [id], onDelete: Cascade)
-  subRoleUsers        User[]      @relation("UserSubRoles")
-  
-  // Booking relationships
-  customerBookings    Booking[]   @relation("CustomerBookings")
-  providerBookings    Booking[]   @relation("ProviderBookings")
-  
-  // Service Request relationships
-  serviceRequests     ServiceRequest[] @relation("UserServiceRequests")
-  
-  // Review relationships
-  reviewsGiven        Review[]    @relation("CustomerReviews")
-  reviewsReceived     Review[]    @relation("ProviderReviews")
-  averageRating       Float?
-  totalReviews        Int         @default(0)
-  
-  // SubRole permissions
-  permissions         String[]    @default([])
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model bookings {
+  id                               String        @id
+  customerId                       String
+  providerId                       String
+  categoryId                       String
+  title                            String
+  description                      String?
+  startTime                        DateTime
+  endTime                          DateTime
+  duration                         Int
+  status                           BookingStatus @default(PENDING)
+  budget                           Float?
+  googleEventId                    String?
+  location                         String?
+  notes                            String?
+  cancellationReason               String?
+  createdAt                        DateTime      @default(now())
+  updatedAt                        DateTime
+  categories                       categories    @relation(fields: [categoryId], references: [id])
+  users_bookings_customerIdTousers users         @relation("bookings_customerIdTousers", fields: [customerId], references: [id], onDelete: Cascade)
+  users_bookings_providerIdTousers users         @relation("bookings_providerIdTousers", fields: [providerId], references: [id], onDelete: Cascade)
+  reviews                          reviews[]
+}
 
-  @@map("users")
+model categories {
+  id               String             @id
+  title            String
+  description      String?
+  image            String?
+  slug             String             @unique
+  isActive         Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  bookings         bookings[]
+  service_requests service_requests[]
+  subcategories    subcategories[]
+}
+
+model inquiries {
+  id        String          @id
+  name      String
+  email     String
+  message   String
+  status    InquiryStatus   @default(PENDING)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime
+  phone     String
+  priority  InquiryPriority @default(MEDIUM)
+  subject   String
+}
+
+model newsletter_subscriptions {
+  id           String   @id
+  email        String   @unique
+  name         String?
+  isActive     Boolean  @default(true)
+  subscribedAt DateTime @default(now())
+  updatedAt    DateTime
+}
+
+model reviews {
+  id                              String    @id
+  rating                          Int
+  comment                         String?
+  customerId                      String
+  providerId                      String
+  bookingId                       String?
+  createdAt                       DateTime  @default(now())
+  updatedAt                       DateTime
+  bookings                        bookings? @relation(fields: [bookingId], references: [id])
+  users_reviews_customerIdTousers users     @relation("reviews_customerIdTousers", fields: [customerId], references: [id], onDelete: Cascade)
+  users_reviews_providerIdTousers users     @relation("reviews_providerIdTousers", fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([providerId])
+}
+
+model service_requests {
+  id            String               @id
+  userId        String
+  categoryId    String
+  subcategoryId String?
+  title         String
+  description   String
+  location      String
+  locationLat   Float?
+  locationLng   Float?
+  budget        Float?
+  serviceDate   DateTime
+  status        ServiceRequestStatus @default(PENDING)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime
+  categories    categories           @relation(fields: [categoryId], references: [id])
+  subcategories subcategories?       @relation(fields: [subcategoryId], references: [id])
+  users         users                @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model subcategories {
+  id               String             @id
+  title            String
+  description      String?
+  image            String?
+  slug             String             @unique
+  isActive         Boolean            @default(true)
+  categoryId       String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  service_requests service_requests[]
+  categories       categories         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model users {
+  id                                  String             @id
+  username                            String             @unique
+  email                               String             @unique
+  password                            String
+  role                                Role               @default(CUSTOMER)
+  firstName                           String?
+  lastName                            String?
+  phone                               String?
+  businessName                        String?
+  businessAddress                     String?
+  licenseNumber                       String?
+  yearsOfExperience                   Int?
+  description                         String?
+  createdAt                           DateTime           @default(now())
+  updatedAt                           DateTime
+  address                             String?
+  averageRating                       Float?
+  certifications                      Json[]             @default([])
+  emailVerified                       Boolean            @default(false)
+  googleCalendarAccessToken           String?
+  googleCalendarRefreshToken          String?
+  googleCalendarTokenExpiry           DateTime?
+  insuranceDocuments                  String[]           @default([])
+  insuranceExpiryDate                 DateTime?
+  insurancePolicyNumber               String?
+  insuranceProvider                   String?
+  parentUserId                        String?
+  permissions                         String[]           @default([])
+  profilePhoto                        String?
+  subRole                             SubRole?
+  totalReviews                        Int                @default(0)
+  verificationToken                   String?
+  verificationTokenExpiry             DateTime?
+  vettedAt                            DateTime?
+  vettedBy                            String?
+  vettedStatus                        VettedStatus       @default(NOT_VETTED)
+  workersCompDocuments                String[]           @default([])
+  workersCompExpiryDate               DateTime?
+  workersCompPolicyNumber             String?
+  workersCompProvider                 String?
+  zipCode                             String?
+  serviceType                         String?
+  bookings_bookings_customerIdTousers bookings[]         @relation("bookings_customerIdTousers")
+  bookings_bookings_providerIdTousers bookings[]         @relation("bookings_providerIdTousers")
+  reviews_reviews_customerIdTousers   reviews[]          @relation("reviews_customerIdTousers")
+  reviews_reviews_providerIdTousers   reviews[]          @relation("reviews_providerIdTousers")
+  service_requests                    service_requests[]
+  users                               users?             @relation("usersTousers", fields: [parentUserId], references: [id], onDelete: Cascade)
+  other_users                         users[]            @relation("usersTousers")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum InquiryPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum InquiryStatus {
+  PENDING
+  REVIEWED
+  RESPONDED
+  CLOSED
 }
 
 enum Role {
   CUSTOMER
   PROVIDER
   ADMIN
+}
+
+enum ServiceRequestStatus {
+  PENDING
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }
 
 enum SubRole {
@@ -111,166 +218,4 @@ enum VettedStatus {
   PENDING_REVIEW
   VETTED
   REJECTED
-}
-
-model NewsletterSubscription {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  name        String?
-  isActive    Boolean  @default(true)
-  subscribedAt DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("newsletter_subscriptions")
-}
-
-model Inquiry {
-  id        String          @id @default(cuid())
-  name      String
-  email     String
-  phone     String
-  subject   String
-  message   String          @db.Text
-  status    InquiryStatus   @default(PENDING)
-  priority  InquiryPriority @default(MEDIUM)
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-
-  @@map("inquiries")
-}
-
-enum InquiryStatus {
-  PENDING
-  REVIEWED
-  RESPONDED
-  CLOSED
-}
-
-enum InquiryPriority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
-}
-
-model Category {
-  id            String        @id @default(cuid())
-  title         String
-  description   String?       @db.Text
-  image         String?
-  slug          String        @unique
-  isActive      Boolean       @default(true)
-  subcategories Subcategory[]
-  bookings      Booking[]     // Relation to bookings
-  serviceRequests ServiceRequest[] @relation("CategoryServiceRequests")
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-
-  @@map("categories")
-}
-
-model Subcategory {
-  id          String   @id @default(cuid())
-  title       String
-  description String?  @db.Text
-  image       String?
-  slug        String   @unique
-  isActive    Boolean  @default(true)
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  serviceRequests ServiceRequest[] @relation("SubcategoryServiceRequests")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("subcategories")
-}
-
-model Booking {
-  id                String        @id @default(cuid())
-  customerId        String
-  customer          User          @relation("CustomerBookings", fields: [customerId], references: [id], onDelete: Cascade)
-  providerId        String
-  provider          User          @relation("ProviderBookings", fields: [providerId], references: [id], onDelete: Cascade)
-  categoryId        String        // Link to Category instead of enum
-  category          Category      @relation(fields: [categoryId], references: [id])
-  title             String
-  description       String?       @db.Text
-  startTime         DateTime
-  endTime           DateTime
-  duration          Int           // Duration in minutes
-  status            BookingStatus @default(PENDING)
-  budget            Float?        // Budget amount for the service
-  googleEventId     String?       // Google Calendar Event ID
-  location          String?
-  notes             String?       @db.Text
-  cancellationReason String?     @db.Text
-  reviews           Review[]      // Relation to reviews
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-
-  @@map("bookings")
-}
-
-enum BookingStatus {
-  PENDING
-  CONFIRMED
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-  NO_SHOW
-}
-
-model ServiceRequest {
-  id            String              @id @default(cuid())
-  userId        String
-  user          User                @relation("UserServiceRequests", fields: [userId], references: [id], onDelete: Cascade)
-  categoryId    String
-  category      Category            @relation("CategoryServiceRequests", fields: [categoryId], references: [id])
-  subcategoryId String?
-  subcategory   Subcategory?        @relation("SubcategoryServiceRequests", fields: [subcategoryId], references: [id])
-  title         String
-  description   String              @db.Text
-  location      String              // Google Places formatted address
-  locationLat   Float?              // Latitude for mapping
-  locationLng   Float?              // Longitude for mapping
-  budget        Float?
-  serviceDate   DateTime
-  status        ServiceRequestStatus @default(PENDING)
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-
-  @@map("service_requests")
-}
-
-enum ServiceRequestStatus {
-  PENDING
-  OPEN
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-}
-
-model Review {
-  id          String   @id @default(cuid())
-  rating      Int      // 1-5 stars
-  comment     String?  @db.Text
-  
-  // Customer who gave the review
-  customerId  String
-  customer    User     @relation("CustomerReviews", fields: [customerId], references: [id], onDelete: Cascade)
-  
-  // Provider who received the review
-  providerId  String
-  provider    User     @relation("ProviderReviews", fields: [providerId], references: [id], onDelete: Cascade)
-  
-  // Optional booking reference
-  bookingId   String?
-  booking     Booking? @relation(fields: [bookingId], references: [id])
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("reviews")
-  @@index([providerId])
-  @@index([customerId])
 }
