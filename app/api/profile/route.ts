@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       select: {
         id: true,
@@ -120,7 +120,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Get existing user
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.users.findUnique({
       where: { id: userId },
       select: {
         profilePhoto: true,
@@ -219,7 +219,7 @@ export async function PUT(request: NextRequest) {
     if (certifications !== null) updateData.certifications = certifications;
 
     // Update user profile
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.users.update({
       where: { id: userId },
       data: updateData,
       select: {

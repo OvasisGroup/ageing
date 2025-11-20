@@ -31,7 +31,7 @@ export async function GET(
       );
     }
 
-    const subRoleUser = await prisma.user.findFirst({
+    const subRoleUser = await prisma.users.findFirst({
       where: {
         id,
         parentUserId,
@@ -93,7 +93,7 @@ export async function PATCH(
     const { firstName, lastName, phone, email, password, permissions, parentUserId } = validationResult.data;
 
     // Verify the subrole user belongs to this parent
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.users.findFirst({
       where: {
         id,
         parentUserId,
@@ -109,7 +109,7 @@ export async function PATCH(
 
     // Check if email is being changed and is already taken
     if (email && email !== existingUser.email) {
-      const emailExists = await prisma.user.findUnique({
+      const emailExists = await prisma.users.findUnique({
         where: { email },
       });
       if (emailExists) {
@@ -142,7 +142,7 @@ export async function PATCH(
     }
 
     // Update the subrole user
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.users.update({
       where: { id },
       data: updateData,
       select: {
@@ -192,7 +192,7 @@ export async function DELETE(
     }
 
     // Verify the subrole user belongs to this parent
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.users.findFirst({
       where: {
         id,
         parentUserId,
@@ -207,7 +207,7 @@ export async function DELETE(
     }
 
     // Delete the subrole user
-    await prisma.user.delete({
+    await prisma.users.delete({
       where: { id },
     });
 

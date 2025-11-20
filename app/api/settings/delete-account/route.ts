@@ -15,11 +15,11 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Get user with related data
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        customerBookings: true,
-        providerBookings: true
+        bookings_bookings_customerIdTousers: true,
+        bookings_bookings_providerIdTousers: true
       }
     });
 
@@ -31,7 +31,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Check for active bookings
-    const hasActiveBookings = [...user.customerBookings, ...user.providerBookings].some(
+    const hasActiveBookings = [...user.bookings_bookings_customerIdTousers, ...user.bookings_bookings_providerIdTousers].some(
       booking => booking.status === 'CONFIRMED' || booking.status === 'PENDING'
     );
 
@@ -93,7 +93,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete user (cascade will handle related records)
-    await prisma.user.delete({
+    await prisma.users.delete({
       where: { id: userId }
     });
 

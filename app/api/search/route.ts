@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const searchTerm = query.trim().toLowerCase();
 
     // Search for categories
-    const categories = await prisma.category.findMany({
+    const categories = await prisma.categories.findMany({
       where: {
         AND: [
           { isActive: true },
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Search for subcategories
-    const subcategories = await prisma.subcategory.findMany({
+    const subcategories = await prisma.subcategories.findMany({
       where: {
         AND: [
           { isActive: true },
@@ -51,13 +51,13 @@ export async function GET(request: NextRequest) {
         ]
       },
       include: {
-        category: true
+        categories: true
       },
       take: 10
     });
 
     // Search for providers (by business name, service type, or name)
-    const providers = await prisma.user.findMany({
+    const providers = await prisma.users.findMany({
       where: {
         AND: [
           { role: 'PROVIDER' },

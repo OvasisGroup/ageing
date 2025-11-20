@@ -8,7 +8,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const subcategories = await prisma.subcategory.findMany({
+    const subcategories = await prisma.subcategories.findMany({
       where: {
         categoryId: id,
         isActive: true

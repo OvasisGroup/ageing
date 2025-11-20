@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { generateId } from '@/lib/utils';
 
 // Validation schema for registration data
 const registerSchema = z.object({
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
     const { username, email, password, role } = validationResult.data;
 
     // Check if user already exists
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
           { email: email },
@@ -67,12 +68,14 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // Create new user in database
-    const newUser = await prisma.user.create({
+    const newUser = await prisma.users.create({
       data: {
+        id: generateId(),
         username,
         email,
         password: hashedPassword,
         role: role as any,
+        updatedAt: new Date(),
       },
       select: {
         id: true,
@@ -115,7 +118,7 @@ export async function POST(request: NextRequest) {
 // GET method to retrieve all users (for testing purposes - remove in production)
 export async function GET() {
   try {
-    const users = await prisma.user.findMany({
+    const users = await prisma.users.findMany({
       select: {
         id: true,
         username: true,

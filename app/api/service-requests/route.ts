@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { generateId } from '@/lib/utils';
 
 // GET - List all service requests for the authenticated user
 export async function GET(request: NextRequest) {
@@ -14,14 +15,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const serviceRequests = await prisma.serviceRequest.findMany({
+    const serviceRequests = await prisma.service_requests.findMany({
       where: {
         userId: userId
       },
       include: {
-        category: true,
-        subcategory: true,
-        user: {
+        categories: true,
+        subcategories: true,
+        users: {
           select: {
             id: true,
             firstName: true,
@@ -72,8 +73,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the service request
-    const serviceRequest = await prisma.serviceRequest.create({
+    const serviceRequest = await prisma.service_requests.create({
       data: {
+        id: generateId(),
         userId,
         categoryId,
         subcategoryId: subcategoryId || null,
@@ -84,12 +86,13 @@ export async function POST(request: NextRequest) {
         locationLng: locationLng ? parseFloat(locationLng) : null,
         budget: budget ? parseFloat(budget) : null,
         serviceDate: new Date(serviceDate),
-        status
+        status,
+        updatedAt: new Date(),
       },
       include: {
-        category: true,
-        subcategory: true,
-        user: {
+        categories: true,
+        subcategories: true,
+        users: {
           select: {
             id: true,
             firstName: true,

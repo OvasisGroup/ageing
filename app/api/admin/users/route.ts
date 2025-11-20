@@ -10,7 +10,7 @@ export async function GET() {
     // In a real application, you would verify admin authentication here
     // For now, we'll assume the request is authenticated
     
-    const users = await prisma.user.findMany({
+    const users = await prisma.users.findMany({
       select: {
         id: true,
         username: true,

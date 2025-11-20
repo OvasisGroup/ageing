@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get provider experience
-    const provider = await prisma.user.findUnique({
+    const provider = await prisma.users.findUnique({
       where: { id: userId },
       select: { yearsOfExperience: true },
     });

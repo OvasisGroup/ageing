@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user has Google Calendar tokens
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       select: {
         googleCalendarRefreshToken: true,

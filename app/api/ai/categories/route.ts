@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 // GET - Fetch all categories with subcategories for AI training
 export async function GET(request: NextRequest) {
   try {
-    const categories = await prisma.category.findMany({
+    const categories = await prisma.categories.findMany({
       where: { isActive: true },
       include: {
         subcategories: {

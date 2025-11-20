@@ -9,10 +9,10 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const subcategory = await prisma.subcategory.findUnique({
+    const subcategory = await prisma.subcategories.findUnique({
       where: { id },
       include: {
-        category: true,
+        categories: true,
       },
     });
 
@@ -50,7 +50,7 @@ export async function PUT(
     const deleteExistingImage = formData.get('deleteExistingImage') === 'true';
 
     // Check if subcategory exists
-    const existingSubcategory = await prisma.subcategory.findUnique({
+    const existingSubcategory = await prisma.subcategories.findUnique({
       where: { id },
     });
 
@@ -63,7 +63,7 @@ export async function PUT(
 
     // Check if category exists if categoryId is provided
     if (categoryId) {
-      const category = await prisma.category.findUnique({
+      const category = await prisma.categories.findUnique({
         where: { id: categoryId },
       });
 
@@ -81,7 +81,7 @@ export async function PUT(
       slug = generateSlug(title);
 
       // Check if new slug already exists
-      const slugExists = await prisma.subcategory.findUnique({
+      const slugExists = await prisma.subcategories.findUnique({
         where: { slug },
       });
 
@@ -111,7 +111,7 @@ export async function PUT(
     }
 
     // Update subcategory
-    const subcategory = await prisma.subcategory.update({
+    const subcategory = await prisma.subcategories.update({
       where: { id },
       data: {
         title: title || existingSubcategory.title,
@@ -122,7 +122,7 @@ export async function PUT(
         isActive,
       },
       include: {
-        category: true,
+        categories: true,
       },
     });
 

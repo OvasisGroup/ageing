@@ -12,14 +12,14 @@ export async function POST(request: NextRequest) {
     const { currentNeeds, location } = await request.json();
 
     // Get user's service history
-    const bookings = await prisma.serviceRequest.findMany({
+    const bookings = await prisma.service_requests.findMany({
       where: { userId: userId },
-      include: { category: true },
+      include: { categories: true },
       orderBy: { createdAt: 'desc' },
       take: 10,
     });
 
-    const userHistory = bookings.map((b) => b.category?.title || 'General Service');
+    const userHistory = bookings.map((b) => b.categories?.title || 'General Service');
 
     const recommendations = await generateServiceRecommendations(
       userHistory,

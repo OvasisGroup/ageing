@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const category = await prisma.category.findUnique({
+    const category = await prisma.categories.findUnique({
       where: { id },
       include: {
         subcategories: true,
@@ -49,7 +49,7 @@ export async function PUT(
     const deleteExistingImage = formData.get('deleteExistingImage') === 'true';
 
     // Check if category exists
-    const existingCategory = await prisma.category.findUnique({
+    const existingCategory = await prisma.categories.findUnique({
       where: { id },
     });
 
@@ -66,7 +66,7 @@ export async function PUT(
       slug = generateSlug(title);
 
       // Check if new slug already exists
-      const slugExists = await prisma.category.findUnique({
+      const slugExists = await prisma.categories.findUnique({
         where: { slug },
       });
 
@@ -96,7 +96,7 @@ export async function PUT(
     }
 
     // Update category
-    const category = await prisma.category.update({
+    const category = await prisma.categories.update({
       where: { id },
       data: {
         title: title || existingCategory.title,

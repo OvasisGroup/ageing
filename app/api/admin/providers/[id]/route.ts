@@ -14,7 +14,7 @@ export async function GET(
     const { id: providerId } = await params;
     
     // Find all providers first and then filter by ID (temporary workaround)
-    const providers = await prisma.user.findMany({
+    const providers = await prisma.users.findMany({
       where: {
         role: 'PROVIDER',
       },
@@ -89,7 +89,7 @@ export async function PUT(
     } = body;
 
     // Check if provider exists and is actually a provider
-    const existingProviders = await prisma.user.findMany({
+    const existingProviders = await prisma.users.findMany({
       where: { 
         id: providerId,
         role: 'PROVIDER'
@@ -105,7 +105,7 @@ export async function PUT(
     }
 
     // Check for unique constraints (username and email)
-    const conflictingUsers = await prisma.user.findMany({
+    const conflictingUsers = await prisma.users.findMany({
       where: {
         OR: [
           { username: username },
@@ -124,7 +124,7 @@ export async function PUT(
     }
 
     // Update the provider
-    const updatedProvider = await prisma.user.update({
+    const updatedProvider = await prisma.users.update({
       where: { id: providerId },
       data: {
         username,
@@ -186,7 +186,7 @@ export async function DELETE(
     // For now, we'll assume the request is authenticated
     
     // Check if provider exists and is actually a provider
-    const existingProviders = await prisma.user.findMany({
+    const existingProviders = await prisma.users.findMany({
       where: { 
         id: providerId,
         role: 'PROVIDER'
@@ -202,7 +202,7 @@ export async function DELETE(
     }
 
     // Delete the provider
-    await prisma.user.delete({
+    await prisma.users.delete({
       where: { id: providerId }
     });
 

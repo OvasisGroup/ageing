@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
+import { generateId } from '@/lib/utils';
 
 // Validation schema for adding subrole users
 const addSubRoleSchema = z.object({
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
     const { username, email, password, firstName, lastName, phone, subRole, permissions, parentUserId } = validationResult.data;
 
     // Check if parent user exists and is a CUSTOMER
-    const parentUser = await prisma.user.findUnique({
+    const parentUser = await prisma.users.findUnique({
       where: { id: parentUserId },
       select: { id: true, role: true },
     });
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
     }
 
     // Check for existing username or email
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
           { username },
@@ -78,8 +79,9 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create subrole user
-    const newSubRoleUser = await prisma.user.create({
+    const newSubRoleUser = await prisma.users.create({
       data: {
+        id: generateId(),
         username,
         email,
         password: hashedPassword,
@@ -90,6 +92,7 @@ export async function POST(request: Request) {
         subRole,
         parentUserId,
         permissions: permissions || [],
+        updatedAt: new Date(),
       },
       select: {
         id: true,
@@ -134,7 +137,7 @@ export async function GET(request: Request) {
     }
 
     // Verify parent user exists and is a CUSTOMER
-    const parentUser = await prisma.user.findUnique({
+    const parentUser = await prisma.users.findUnique({
       where: { id: parentUserId },
       select: { id: true, role: true },
     });
@@ -154,7 +157,7 @@ export async function GET(request: Request) {
     }
 
     // Get all subrole users for this customer
-    const subRoleUsers = await prisma.user.findMany({
+    const subRoleUsers = await prisma.users.findMany({
       where: {
         parentUserId,
       },

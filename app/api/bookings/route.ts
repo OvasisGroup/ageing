@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { createCalendarEvent, hasGoogleCalendar } from '@/lib/google-calendar';
+import { generateId } from '@/lib/utils';
 
 // Validation schema
 const createBookingSchema = z.object({
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user role to determine which bookings to show
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       select: { role: true }
     });
@@ -43,11 +44,11 @@ export async function GET(request: NextRequest) {
 
     // Get bookings based on user role
     const bookings = user.role === 'PROVIDER' 
-      ? await prisma.booking.findMany({
+      ? await prisma.bookings.findMany({
           where: { providerId: userId },
           include: {
-            category: true,
-            customer: {
+            categories: true,
+            users_bookings_customerIdTousers: {
               select: {
                 id: true,
                 firstName: true,
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
                 phone: true,
               }
             },
-            provider: {
+            users_bookings_providerIdTousers: {
               select: {
                 id: true,
                 firstName: true,
@@ -69,11 +70,11 @@ export async function GET(request: NextRequest) {
           },
           orderBy: { startTime: 'desc' }
         })
-      : await prisma.booking.findMany({
+      : await prisma.bookings.findMany({
           where: { customerId: userId },
           include: {
-            category: true,
-            customer: {
+            categories: true,
+            users_bookings_customerIdTousers: {
               select: {
                 id: true,
                 firstName: true,
@@ -82,7 +83,7 @@ export async function GET(request: NextRequest) {
                 phone: true,
               }
             },
-            provider: {
+            users_bookings_providerIdTousers: {
               select: {
                 id: true,
                 firstName: true,
@@ -137,7 +138,7 @@ export async function POST(request: NextRequest) {
     const { providerId, categoryId, title, description, startTime, endTime, location, budget, notes } = validation.data;
 
     // Verify provider exists
-    const provider = await prisma.user.findFirst({
+    const provider = await prisma.users.findFirst({
       where: {
         id: providerId,
         role: 'PROVIDER'
@@ -159,7 +160,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get customer info
-    const customer = await prisma.user.findUnique({
+    const customer = await prisma.users.findUnique({
       where: { id: userId },
       select: {
         firstName: true,
@@ -181,8 +182,9 @@ export async function POST(request: NextRequest) {
     const duration = Math.round((end.getTime() - start.getTime()) / 60000);
 
     // Create booking in database
-    const booking = await prisma.booking.create({
+    const booking = await prisma.bookings.create({
       data: {
+        id: generateId(),
         customerId: userId,
         providerId,
         categoryId,
@@ -195,10 +197,11 @@ export async function POST(request: NextRequest) {
         budget,
         notes,
         status: 'PENDING',
+        updatedAt: new Date(),
       },
       include: {
-        category: true,
-        customer: {
+        categories: true,
+        users_bookings_customerIdTousers: {
           select: {
             id: true,
             firstName: true,
@@ -207,7 +210,7 @@ export async function POST(request: NextRequest) {
             phone: true,
           }
         },
-        provider: {
+        users_bookings_providerIdTousers: {
           select: {
             id: true,
             firstName: true,
@@ -226,10 +229,10 @@ export async function POST(request: NextRequest) {
     
     if (hasCalendar) {
       try {
-        const bookingWithCategory = booking as typeof booking & { category: { title: string } };
+        const bookingWithCategory = booking as typeof booking & { categories: { title: string } };
         const event = await createCalendarEvent(userId, {
           summary: `${title} - ${provider.businessName || `${provider.firstName} ${provider.lastName}`}`,
-          description: description || `Booking with ${provider.businessName || `${provider.firstName} ${provider.lastName}`}\n\nService: ${bookingWithCategory.category.title}\n\n${notes || ''}`,
+          description: description || `Booking with ${provider.businessName || `${provider.firstName} ${provider.lastName}`}\n\nService: ${bookingWithCategory.categories.title}\n\n${notes || ''}`,
           location: location,
           startTime: start,
           endTime: end,
@@ -246,7 +249,7 @@ export async function POST(request: NextRequest) {
         googleEventId = event.id || null;
 
         // Update booking with Google Calendar event ID
-        await prisma.booking.update({
+        await prisma.bookings.update({
           where: { id: booking.id },
           data: { googleEventId }
         });

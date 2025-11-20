@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Find user by email
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { email },
     });
 
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const expiry = getOTPExpiry();
 
     // Update user with OTP
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: user.id },
       data: {
         verificationToken: otp,

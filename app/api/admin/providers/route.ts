@@ -10,7 +10,7 @@ export async function GET() {
     // In a real application, you would verify admin authentication here
     // For now, we'll assume the request is authenticated
     
-    const providers = await prisma.user.findMany({
+    const providers = await prisma.users.findMany({
       where: {
         role: 'PROVIDER',
       },

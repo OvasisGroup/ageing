@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { saveImage, deleteImage, generateSlug, CATEGORIES_DIR } from '@/lib/upload';
+import { generateId } from '@/lib/utils';
 
 // GET - Fetch all categories
 export async function GET(request: NextRequest) {
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
     // Ensure database connection
     await prisma.$connect();
 
-    const categories = await prisma.category.findMany({
+    const categories = await prisma.categories.findMany({
       where,
       include: {
         subcategories: includeSubcategories,
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
     const slug = generateSlug(title);
 
     // Check if slug already exists
-    const existingCategory = await prisma.category.findUnique({
+    const existingCategory = await prisma.categories.findUnique({
       where: { slug },
     });
 
@@ -82,13 +83,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Create category
-    const category = await prisma.category.create({
+    const category = await prisma.categories.create({
       data: {
+        id: generateId(),
         title,
         description: description || null,
         image: imagePath,
         slug,
         isActive,
+        updatedAt: new Date(),
       },
       include: {
         subcategories: true,
@@ -125,7 +128,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Get category to delete image
-    const category = await prisma.category.findUnique({
+    const category = await prisma.categories.findUnique({
       where: { id },
     });
 
@@ -142,7 +145,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete category (subcategories will be cascade deleted)
-    await prisma.category.delete({
+    await prisma.categories.delete({
       where: { id },
     });
 

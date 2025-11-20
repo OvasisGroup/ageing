@@ -32,7 +32,7 @@ export async function GET(
       );
     }
 
-    const booking = await prisma.booking.findFirst({
+    const booking = await prisma.bookings.findFirst({
       where: {
         id,
         OR: [
@@ -41,7 +41,7 @@ export async function GET(
         ]
       },
       include: {
-        customer: {
+        users_bookings_customerIdTousers: {
           select: {
             id: true,
             firstName: true,
@@ -51,7 +51,7 @@ export async function GET(
             address: true,
           }
         },
-        provider: {
+        users_bookings_providerIdTousers: {
           select: {
             id: true,
             firstName: true,
@@ -116,7 +116,7 @@ export async function PUT(
     }
 
     // Check if booking exists and user has permission
-    const existingBooking = await prisma.booking.findFirst({
+    const existingBooking = await prisma.bookings.findFirst({
       where: {
         id,
         OR: [
@@ -166,11 +166,11 @@ export async function PUT(
     if (status) updateData.status = status as BookingStatus;
     if (cancellationReason !== undefined) updateData.cancellationReason = cancellationReason;
 
-    const booking = await prisma.booking.update({
+    const booking = await prisma.bookings.update({
       where: { id },
       data: updateData,
       include: {
-        customer: {
+        users_bookings_customerIdTousers: {
           select: {
             id: true,
             firstName: true,
@@ -179,7 +179,7 @@ export async function PUT(
             phone: true,
           }
         },
-        provider: {
+        users_bookings_providerIdTousers: {
           select: {
             id: true,
             firstName: true,
@@ -246,7 +246,7 @@ export async function DELETE(
     }
 
     // Check if booking exists and user has permission
-    const booking = await prisma.booking.findFirst({
+    const booking = await prisma.bookings.findFirst({
       where: {
         id,
         OR: [
@@ -274,7 +274,7 @@ export async function DELETE(
     }
 
     // Delete booking from database
-    await prisma.booking.delete({
+    await prisma.bookings.delete({
       where: { id }
     });
 

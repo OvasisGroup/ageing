@@ -22,7 +22,7 @@ export async function PUT(
     }
 
     // Verify admin role
-    const admin = await prisma.user.findUnique({
+    const admin = await prisma.users.findUnique({
       where: { id: adminId },
       select: { role: true },
     });
@@ -48,7 +48,7 @@ export async function PUT(
     }
 
     // Check if user exists
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       select: { id: true, role: true, vettedStatus: true },
     });
@@ -69,7 +69,7 @@ export async function PUT(
     }
 
     // Update vetted status
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.users.update({
       where: { id: userId },
       data: {
         vettedStatus,
@@ -125,7 +125,7 @@ export async function GET(
     }
 
     // Verify admin role
-    const admin = await prisma.user.findUnique({
+    const admin = await prisma.users.findUnique({
       where: { id: adminId },
       select: { role: true },
     });
@@ -139,7 +139,7 @@ export async function GET(
 
     const { id: userId } = await params;
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       select: {
         id: true,
@@ -183,7 +183,7 @@ export async function GET(
     // Get vetting admin details if available
     let vettedByAdmin = null;
     if (user.vettedBy) {
-      vettedByAdmin = await prisma.user.findUnique({
+      vettedByAdmin = await prisma.users.findUnique({
         where: { id: user.vettedBy },
         select: {
           id: true,

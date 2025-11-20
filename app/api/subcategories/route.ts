@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { saveImage, deleteImage, generateSlug, SUBCATEGORIES_DIR } from '@/lib/upload';
+import { generateId } from '@/lib/utils';
 
 // GET - Fetch all subcategories
 export async function GET(request: NextRequest) {
@@ -19,10 +20,10 @@ export async function GET(request: NextRequest) {
       where.isActive = isActive === 'true';
     }
 
-    const subcategories = await prisma.subcategory.findMany({
+    const subcategories = await prisma.subcategories.findMany({
       where,
       include: {
-        category: true,
+        categories: true,
       },
       orderBy: {
         createdAt: 'desc',
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if category exists
-    const category = await prisma.category.findUnique({
+    const category = await prisma.categories.findUnique({
       where: { id: categoryId },
     });
 
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
     const slug = generateSlug(title);
 
     // Check if slug already exists
-    const existingSubcategory = await prisma.subcategory.findUnique({
+    const existingSubcategory = await prisma.subcategories.findUnique({
       where: { slug },
     });
 
@@ -99,17 +100,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Create subcategory
-    const subcategory = await prisma.subcategory.create({
+    const subcategory = await prisma.subcategories.create({
       data: {
+        id: generateId(),
         title,
         description: description || null,
         image: imagePath,
         slug,
         categoryId,
         isActive,
+        updatedAt: new Date(),
       },
       include: {
-        category: true,
+        categories: true,
       },
     });
 
@@ -143,7 +146,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Get subcategory to delete image
-    const subcategory = await prisma.subcategory.findUnique({
+    const subcategory = await prisma.subcategories.findUnique({
       where: { id },
     });
 
@@ -160,7 +163,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete subcategory
-    await prisma.subcategory.delete({
+    await prisma.subcategories.delete({
       where: { id },
     });
 

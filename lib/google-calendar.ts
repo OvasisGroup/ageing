@@ -36,7 +36,7 @@ export async function getTokensFromCode(code: string) {
 
 // Get calendar client with user's credentials
 export async function getCalendarClient(userId: string) {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.users.findUnique({
     where: { id: userId },
     select: {
       googleCalendarRefreshToken: true,
@@ -62,7 +62,7 @@ export async function getCalendarClient(userId: string) {
     const { credentials } = await oauth2Client.refreshAccessToken();
     
     // Update tokens in database
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: userId },
       data: {
         googleCalendarAccessToken: credentials.access_token,
@@ -205,7 +205,7 @@ export async function deleteCalendarEvent(userId: string, eventId: string) {
 
 // Check if user has connected Google Calendar
 export async function hasGoogleCalendar(userId: string): Promise<boolean> {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.users.findUnique({
     where: { id: userId },
     select: { googleCalendarRefreshToken: true }
   });
@@ -215,7 +215,7 @@ export async function hasGoogleCalendar(userId: string): Promise<boolean> {
 
 // Disconnect Google Calendar
 export async function disconnectGoogleCalendar(userId: string) {
-  await prisma.user.update({
+  await prisma.users.update({
     where: { id: userId },
     data: {
       googleCalendarRefreshToken: null,

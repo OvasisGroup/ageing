@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     // Try to get user role even for errors
     if (userId) {
       try {
-        const user = await prisma.user.findUnique({
+        const user = await prisma.users.findUnique({
           where: { id: userId },
           select: { role: true }
         });
@@ -39,13 +39,13 @@ export async function GET(request: NextRequest) {
     const tokens = await getTokensFromCode(code);
 
     // Get user to determine role for redirect
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       select: { role: true }
     });
 
     // Update user with tokens
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: userId },
       data: {
         googleCalendarRefreshToken: tokens.refresh_token,

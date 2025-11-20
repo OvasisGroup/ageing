@@ -11,7 +11,7 @@ export async function GET(
   try {
     const { id } = await context.params;
 
-    const reviews = await prisma.review.findMany({
+    const reviews = await prisma.reviews.findMany({
       where: {
         providerId: id,
       },

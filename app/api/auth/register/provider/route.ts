@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { generateOTP, getOTPExpiry, sendVerificationEmail } from '@/lib/email';
+import { generateId } from '@/lib/utils';
 
 // Validation schema for provider registration data
 const providerRegisterSchema = z.object({
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
     } = validationResult.data;
 
     // Check if user already exists
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
           { email: email },
@@ -115,8 +116,9 @@ export async function POST(request: NextRequest) {
     const otpExpiry = getOTPExpiry();
 
     // Create new provider user in database
-    const newUser = await prisma.user.create({
+    const newUser = await prisma.users.create({
       data: {
+        id: generateId(),
         username,
         email,
         password: hashedPassword,
@@ -134,6 +136,7 @@ export async function POST(request: NextRequest) {
         emailVerified: false,
         verificationToken: otp,
         verificationTokenExpiry: otpExpiry,
+        updatedAt: new Date(),
       },
       select: {
         id: true,

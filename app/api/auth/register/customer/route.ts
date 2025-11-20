@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { generateOTP, getOTPExpiry, sendVerificationEmail } from '@/lib/email';
+import { generateId } from '@/lib/utils';
 
 // Validation schema for customer registration data
 const customerRegisterSchema = z.object({
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
     // If registering as a subrole, verify parent customer exists
     let parentUserId: string | null = null;
     if (subRole && parentCustomerEmail) {
-      const parentCustomer = await prisma.user.findUnique({
+      const parentCustomer = await prisma.users.findUnique({
         where: { email: parentCustomerEmail },
         select: { id: true, role: true }
       });
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
           { email: email },
@@ -124,8 +125,9 @@ export async function POST(request: NextRequest) {
     const otpExpiry = getOTPExpiry();
 
     // Create new customer user in database
-    const newUser = await prisma.user.create({
+    const newUser = await prisma.users.create({
       data: {
+        id: generateId(),
         username,
         email,
         password: hashedPassword,
@@ -140,6 +142,7 @@ export async function POST(request: NextRequest) {
         emailVerified: false,
         verificationToken: otp,
         verificationTokenExpiry: otpExpiry,
+        updatedAt: new Date(),
       },
       select: {
         id: true,

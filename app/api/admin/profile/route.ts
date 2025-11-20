@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       select: {
         id: true,
@@ -72,7 +72,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Check if user exists and is admin
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.users.findUnique({
       where: { id: userId },
     });
 
@@ -92,7 +92,7 @@ export async function PUT(request: NextRequest) {
 
     // Check if email is being changed and if it's already taken
     if (email && email !== existingUser.email) {
-      const emailExists = await prisma.user.findUnique({
+      const emailExists = await prisma.users.findUnique({
         where: { email },
       });
 
@@ -105,7 +105,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update user profile
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.users.update({
       where: { id: userId },
       data: {
         firstName,

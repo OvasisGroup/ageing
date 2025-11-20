@@ -3,9 +3,9 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const serviceRequests = await prisma.serviceRequest.findMany({
+    const serviceRequests = await prisma.service_requests.findMany({
       include: {
-        user: {
+        users: {
           select: {
             firstName: true,
             lastName: true,
@@ -13,12 +13,12 @@ export async function GET() {
             phone: true,
           },
         },
-        category: {
+        categories: {
           select: {
             title: true,
           },
         },
-        subcategory: {
+        subcategories: {
           select: {
             title: true,
           },
@@ -40,7 +40,7 @@ export async function GET() {
       location: request.location,
       status: request.status.toLowerCase().replace('_', ' '),
       createdAt: request.createdAt.toISOString(),
-      user: {
+      users: {
         firstName: request.user.firstName,
         lastName: request.user.lastName,
         email: request.user.email,

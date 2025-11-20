@@ -13,13 +13,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Get the current user with their parent relationship
-    const currentUser = await prisma.user.findUnique({
+    const currentUser = await prisma.users.findUnique({
       where: { id: userId },
       select: {
         id: true,
         subRole: true,
         parentUserId: true,
-        parentUser: {
+        users: {
           select: {
             id: true,
             firstName: true,
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify user has a subrole and parent customer
-    if (!currentUser.subRole || !currentUser.parentUserId || !currentUser.parentUser) {
+    if (!currentUser.subRole || !currentUser.parentUserId || !currentUser.users) {
       return NextResponse.json(
         { error: 'Not authorized. User must be a family member or caregiver linked to a customer.' },
         { status: 403 }
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      customer: currentUser.parentUser,
+      customer: currentUser.users,
       subRole: currentUser.subRole
     });
 

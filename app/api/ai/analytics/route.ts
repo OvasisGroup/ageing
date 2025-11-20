@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify admin role
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       select: { role: true },
     });
@@ -23,9 +23,9 @@ export async function GET(request: NextRequest) {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
     const [totalBookings, totalProviders, totalCustomers] = await Promise.all([
-      prisma.serviceRequest.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
-      prisma.user.count({ where: { role: 'PROVIDER', createdAt: { gte: sevenDaysAgo } } }),
-      prisma.user.count({ where: { role: 'CUSTOMER', createdAt: { gte: sevenDaysAgo } } }),
+      prisma.service_requests.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+      prisma.users.count({ where: { role: 'PROVIDER', createdAt: { gte: sevenDaysAgo } } }),
+      prisma.users.count({ where: { role: 'CUSTOMER', createdAt: { gte: sevenDaysAgo } } }),
     ]);
 
     // Mock daily values for trend analysis

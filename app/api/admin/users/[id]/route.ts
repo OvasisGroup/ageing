@@ -14,7 +14,7 @@ export async function GET(
     const { id: userId } = await params;
     
     // Find all users first and then filter by ID (temporary workaround)
-    const users = await prisma.user.findMany({
+    const users = await prisma.users.findMany({
       select: {
         id: true,
         username: true,
@@ -86,7 +86,7 @@ export async function PUT(
     } = body;
 
     // Check if user exists
-    const existingUsers = await prisma.user.findMany({
+    const existingUsers = await prisma.users.findMany({
       where: { id: userId },
       select: { id: true }
     });
@@ -99,7 +99,7 @@ export async function PUT(
     }
 
     // Check for unique constraints (username and email)
-    const conflictingUsers = await prisma.user.findMany({
+    const conflictingUsers = await prisma.users.findMany({
       where: {
         OR: [
           { username: username },
@@ -118,7 +118,7 @@ export async function PUT(
     }
 
     // Update the user
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.users.update({
       where: { id: userId },
       data: {
         username,
@@ -180,7 +180,7 @@ export async function DELETE(
     // For now, we'll assume the request is authenticated
     
     // Check if user exists
-    const existingUsers = await prisma.user.findMany({
+    const existingUsers = await prisma.users.findMany({
       where: { id: userId },
       select: { id: true, role: true }
     });
@@ -203,7 +203,7 @@ export async function DELETE(
     }
 
     // Delete the user
-    await prisma.user.delete({
+    await prisma.users.delete({
       where: { id: userId }
     });
 
